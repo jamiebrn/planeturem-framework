@@ -16,11 +16,11 @@ int main(int argc, char* argv[])
 
     SDL_Window* window = SDL_CreateWindow("GL-Framework", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-    gladLoaderLoadGL();
-
     SDL_GLContext glContext = SDL_GL_CreateContext(window);
 
     SDL_GL_MakeCurrent(window, glContext);
+    
+    gladLoaderLoadGL();
 
     const uint8_t* keyboardState = SDL_GetKeyboardState(NULL);
 
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        glClear(GL_COLOR);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         SDL_GL_SwapWindow(window);
 
