@@ -1,11 +1,13 @@
 #pragma once
 
 #include <gl.h>
-#include <SDL.h>
 #include <string>
 #include <iostream>
 
 #include "Image.hpp"
+
+namespace pl
+{
 
 class Texture
 {
@@ -19,10 +21,18 @@ public:
     void setTextureRepeat(bool repeat);
     void setLinearFilter(bool value);
 
+    int getWidth() const;
+    int getHeight() const;
+
     void use() const;
     GLuint getID();
 
 private:
     GLuint textureId = 0;
 
+    int width;
+    int height;
+
 };
+
+}

@@ -1,0 +1,34 @@
+#include "RenderTarget.hpp"
+#include "Shader.hpp"
+#include "Texture.hpp"
+#include "VertexArray.hpp"
+
+void pl::RenderTarget::clear(const Color& color)
+{
+    bind();
+    glClearColor(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void pl::RenderTarget::draw(const VertexArray& vertexArray, const Shader& shader, const Texture& texture, BlendMode blendMode)
+{
+    bind();
+    shader.use();
+    texture.use();
+
+    switch (blendMode)
+    {
+        case BlendMode::None:
+        {
+            glBlendFunc(GL_ONE, GL_ZERO);
+            break;
+        }
+        case BlendMode::Alpha:
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        }
+    }
+
+    vertexArray.draw(*this);
+}

@@ -1,6 +1,6 @@
 #include "Shader.hpp"
 
-Shader::~Shader()
+pl::Shader::~Shader()
 {
     if (shaderProgram == 0)
     {
@@ -11,7 +11,7 @@ Shader::~Shader()
     shaderProgram = 0;
 }
 
-bool Shader::load(const std::string& vertexPath, const std::string& fragPath)
+bool pl::Shader::load(const std::string& vertexPath, const std::string& fragPath)
 {
     std::ifstream vertexStream(vertexPath);
 
@@ -89,7 +89,7 @@ bool Shader::load(const std::string& vertexPath, const std::string& fragPath)
     return true;
 }
 
-void Shader::use() const
+void pl::Shader::use() const
 {
     if (shaderProgram == 0)
     {
@@ -99,7 +99,7 @@ void Shader::use() const
     glUseProgram(shaderProgram);
 }
 
-GLuint Shader::getProgram()
+GLuint pl::Shader::getProgram()
 {
     return shaderProgram;
 }

@@ -1,11 +1,13 @@
 #pragma once
 
 #include <gl.h>
-#include <SDL.h>
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <iostream>
+
+namespace pl
+{
 
 class Shader
 {
@@ -23,3 +25,5 @@ private:
     GLuint shaderProgram = 0;
 
 };
+
+}

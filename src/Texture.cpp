@@ -1,6 +1,6 @@
 #include "Texture.hpp"
 
-Texture::~Texture()
+pl::Texture::~Texture()
 {
     if (textureId == 0)
     {
@@ -12,22 +12,23 @@ Texture::~Texture()
     textureId = 0;
 }
 
-bool Texture::loadTexture(const std::string& texturePath, bool mipmap)
+bool pl::Texture::loadTexture(const std::string& texturePath, bool mipmap)
 {
     if (textureId == 0)
     {
         glGenTextures(1, &textureId);
     }
 
-    stbi_set_flip_vertically_on_load(true);
-
     Image image;
 
     if (!image.loadFromFile(texturePath))
     {
-        std::cout << "ERROR: Failed to load texture:\n" << SDL_GetError() << "\n";
+        std::cout << "ERROR: Failed to load texture: " << texturePath << "\n";
         return false;
     }
+
+    width = image.getWidth();
+    height = image.getHeight();
 
     glBindTexture(GL_TEXTURE_2D, textureId);
 
@@ -51,7 +52,7 @@ bool Texture::loadTexture(const std::string& texturePath, bool mipmap)
     return true;
 }
 
-void Texture::setTextureRepeat(bool repeat)
+void pl::Texture::setTextureRepeat(bool repeat)
 {
     if (textureId == 0)
     {
@@ -60,21 +61,13 @@ void Texture::setTextureRepeat(bool repeat)
 
     glBindTexture(GL_TEXTURE_2D, textureId);
 
-    if (repeat)
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
-    else
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::setLinearFilter(bool value)
+void pl::Texture::setLinearFilter(bool value)
 {
     if (textureId == 0)
     {
@@ -83,24 +76,27 @@ void Texture::setLinearFilter(bool value)
 
     glBindTexture(GL_TEXTURE_2D, textureId);
 
-    if (value)
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
-    else
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, value ? GL_LINEAR : GL_NEAREST);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::use() const
+int pl::Texture::getWidth() const
+{
+    return width;
+}
+
+int pl::Texture::getHeight() const
+{
+    return height;
+}
+
+void pl::Texture::use() const
 {
     glBindTexture(GL_TEXTURE_2D, textureId);
 }
 
-GLuint Texture::getID()
+GLuint pl::Texture::getID()
 {
     return textureId;
 }

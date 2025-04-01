@@ -5,7 +5,7 @@
 
 struct Vertex
 {
-    Vector2f position;
-    Color color;
-    Vector2f textureUV;
+    pl::Vector2f position;
+    pl::Color color;
+    pl::Vector2f textureUV;
 };
