@@ -7,6 +7,7 @@ pl::Window::Window(const std::string& title, int width, int height, uint32_t fla
     window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | flags);
     glContext = SDL_GL_CreateContext(window);
     SDL_GL_MakeCurrent(window, glContext);
+    SDL_AddEventWatch(eventWatch, this);
 
     if (!glInitialised)
     {
@@ -14,11 +15,24 @@ pl::Window::Window(const std::string& title, int width, int height, uint32_t fla
         glInitialised = true;
         glEnable(GL_BLEND);
     }
+
+    nonFullscreenWidth = width;
+    nonFullscreenHeight = height;
+
+    running = true;
 }
 
 pl::Window::~Window()
 {
     SDL_DestroyWindow(window);
+    SDL_DelEventWatch(eventWatch, this);
+}
+
+void pl::Window::toggleFullscreen()
+{
+    uint32_t windowFlags = (SDL_GetWindowFlags(window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
+    const char* title = SDL_GetWindowTitle(window);
+    recreate(std::string(title), nonFullscreenWidth, nonFullscreenHeight, windowFlags);
 }
 
 void pl::Window::recreate(const std::string& title, int width, int height, uint32_t flags)
@@ -26,6 +40,43 @@ void pl::Window::recreate(const std::string& title, int width, int height, uint3
     SDL_DestroyWindow(window);
     window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | flags);
     SDL_GL_MakeCurrent(window, glContext);
+}
+
+void pl::Window::setIcon(const Image& image)
+{
+    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(image.getPixelPtr(), image.getWidth(), image.getHeight(), 32, image.getWidth() * 4, 0xFF, 0xFF00, 0xFF0000, 0xFF000000);
+    SDL_SetWindowIcon(window, surface);
+    SDL_FreeSurface(surface);
+}
+
+void pl::Window::setUpdateFunction(void (*updateFunction)(void*), void* updateFunctionData)
+{
+    this->updateFunction = updateFunction;
+    this->updateFunctionData = updateFunctionData;
+}
+
+void pl::Window::startUpdate()
+{
+    if (!updateFunction)
+    {
+        printf("ERROR: Attempted to start window update with null update function\n");
+        return;
+    }
+
+    while (isOpen())
+    {
+        (*updateFunction)(updateFunctionData);
+    }
+}
+
+bool pl::Window::isOpen()
+{
+    return running;
+}
+
+void pl::Window::close()
+{
+    running = false;
 }
 
 int pl::Window::pollEvent(SDL_Event& event)
@@ -38,6 +89,11 @@ int pl::Window::pollEvent(SDL_Event& event)
         {
             glViewport(0, 0, event.window.data1, event.window.data2);
         }
+    }
+
+    if (event.type == SDL_QUIT)
+    {
+        running = false;
     }
 
     return eventReceived;
@@ -70,4 +126,24 @@ int pl::Window::getHeight()
     int windowWidth, windowHeight;
     SDL_GetWindowSize(window, &windowWidth, &windowHeight);
     return windowHeight;
+}
+
+int pl::Window::eventWatch(void* data, SDL_Event* event)
+{
+    if (event->type == SDL_WINDOWEVENT)
+    {
+        if (event->window.event == SDL_WINDOWEVENT_EXPOSED)
+        {
+            Window* window = (Window*)data;
+            window->bind();
+            glViewport(0, 0, window->getWidth(), window->getHeight());
+
+            if (window->updateFunction)
+            {
+                (*window->updateFunction)(window->updateFunctionData);
+            }
+        }
+    }
+
+    return 1;
 }
