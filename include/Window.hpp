@@ -17,8 +17,11 @@ namespace pl
 class Window : public RenderTarget
 {
 public:
+    Window();
     Window(const std::string& title, int width, int height, uint32_t flags);
     ~Window();
+
+    void create(const std::string& title, int width, int height, uint32_t flags);
 
     void setIcon(const Image& image);
 
@@ -29,7 +32,6 @@ public:
     void close();
 
     void toggleFullscreen();
-    void recreate(const std::string& title, int width, int height, uint32_t flags);
 
     int pollEvent(SDL_Event& event);
 
@@ -56,6 +58,8 @@ private:
     bool running;
     int nonFullscreenWidth;
     int nonFullscreenHeight;
+
+    bool initialised;
 
     static bool glInitialised;
 

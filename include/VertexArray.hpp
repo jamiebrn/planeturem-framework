@@ -27,8 +27,8 @@ public:
 private:
     std::vector<Vertex> vertices;
 
-    GLuint glVertexArray;
-    GLuint glVertexBuffer;
+    // GLuint glVertexArray;
+    // GLuint glVertexBuffer;
 
 };
 

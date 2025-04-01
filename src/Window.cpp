@@ -2,12 +2,42 @@
 
 bool pl::Window::glInitialised = false;
 
+pl::Window::Window()
+{
+    initialised = false;
+    window = nullptr;
+    glContext = nullptr;
+}
+
 pl::Window::Window(const std::string& title, int width, int height, uint32_t flags)
 {
+    initialised = false;
+    create(title, width, height, flags);
+}
+
+pl::Window::~Window()
+{
+    SDL_DestroyWindow(window);
+    SDL_DelEventWatch(eventWatch, this);
+}
+
+void pl::Window::create(const std::string& title, int width, int height, uint32_t flags)
+{
+    if (initialised)
+    {
+        SDL_DestroyWindow(window);
+    }
+
     window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | flags);
-    glContext = SDL_GL_CreateContext(window);
+    
+    if (!initialised)
+    {
+        glContext = SDL_GL_CreateContext(window);
+        SDL_AddEventWatch(eventWatch, this);
+        initialised = true;
+    }
+
     SDL_GL_MakeCurrent(window, glContext);
-    SDL_AddEventWatch(eventWatch, this);
 
     if (!glInitialised)
     {
@@ -22,24 +52,11 @@ pl::Window::Window(const std::string& title, int width, int height, uint32_t fla
     running = true;
 }
 
-pl::Window::~Window()
-{
-    SDL_DestroyWindow(window);
-    SDL_DelEventWatch(eventWatch, this);
-}
-
 void pl::Window::toggleFullscreen()
 {
     uint32_t windowFlags = (SDL_GetWindowFlags(window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
     const char* title = SDL_GetWindowTitle(window);
-    recreate(std::string(title), nonFullscreenWidth, nonFullscreenHeight, windowFlags);
-}
-
-void pl::Window::recreate(const std::string& title, int width, int height, uint32_t flags)
-{
-    SDL_DestroyWindow(window);
-    window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | flags);
-    SDL_GL_MakeCurrent(window, glContext);
+    create(std::string(title), nonFullscreenWidth, nonFullscreenHeight, windowFlags);
 }
 
 void pl::Window::setIcon(const Image& image)
