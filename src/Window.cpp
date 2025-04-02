@@ -129,6 +129,7 @@ void pl::Window::setTitle(const std::string& title)
 void pl::Window::bind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, getWidth(), getHeight());
 }
 
 int pl::Window::getWidth()
@@ -153,7 +154,6 @@ int pl::Window::eventWatch(void* data, SDL_Event* event)
         {
             Window* window = (Window*)data;
             window->bind();
-            glViewport(0, 0, window->getWidth(), window->getHeight());
 
             if (window->updateFunction)
             {

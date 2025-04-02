@@ -1,7 +1,6 @@
 #include <vector>
 #include <chrono>
 #include <string>
-#include <memory>
 
 #include "Engine.hpp"
 #include "Window.hpp"
@@ -17,7 +16,7 @@ std::vector<pl::Vector2f> positions;
 auto nowTime = timeClock.now();
 auto lastTime = nowTime;
 float gameTime = 0;
-std::unique_ptr<pl::Window> window;
+pl::Window window;
 const uint8_t* keyboardState;
 
 void update(void* data)
@@ -28,18 +27,18 @@ void update(void* data)
     gameTime += dt;
 
     SDL_Event event;
-    while (window->pollEvent(event))
+    while (window.pollEvent(event))
     {
         if (event.type == SDL_KEYDOWN)
         {
             if (event.key.keysym.scancode == SDL_SCANCODE_F11)
             {
-                window->toggleFullscreen();
+                window.toggleFullscreen();
             }
         }
     }
 
-    window->clear({0, 0, 0, 255});
+    window.clear({0, 0, 0, 255});
 
     pl::SpriteBatch spriteBatch;
     spriteBatch.beginDrawing();
@@ -54,25 +53,25 @@ void update(void* data)
         drawData.textureRect = {0, 0, 256, 256};
         drawData.centerRatio = pl::Vector2f(0.5, 0.5);
         drawData.rotation = (gameTime + i) * 30;
-        spriteBatch.draw(*window, drawData);
+        spriteBatch.draw(window, drawData);
     }
 
-    spriteBatch.endDrawing(*window);
+    spriteBatch.endDrawing(window);
 
-    window->swapBuffers();
+    window.swapBuffers();
 
-    window->setTitle("GL-Framework - " + std::to_string(int(1.0 / dt)) + "fps");
+    window.setTitle("GL-Framework - " + std::to_string(int(1.0 / dt)) + "fps");
 }
 
 int main(int argc, char* argv[])
 {
     pl::init();
 
-    window = std::make_unique<pl::Window>("GL-Framework", 800, 600, SDL_WINDOW_RESIZABLE);
+    window.create("GL-Framework", 800, 600, SDL_WINDOW_RESIZABLE);
 
     Image image;
     image.loadFromFile("Data/icon.png");
-    window->setIcon(image);
+    window.setIcon(image);
 
     keyboardState = SDL_GetKeyboardState(NULL);
 
@@ -85,8 +84,8 @@ int main(int argc, char* argv[])
         positions.push_back(pl::Vector2f(rand() % 800, rand() % 600));
     }
 
-    window->setUpdateFunction((*update), nullptr);
-    window->startUpdate();
+    window.setUpdateFunction((*update), nullptr);
+    window.startUpdate();
 
     pl::deinit();
 
