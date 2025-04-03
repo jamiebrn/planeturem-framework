@@ -41,18 +41,25 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
-find_package(Freetype REQUIRED)
+# find_package(Freetype REQUIRED)
+FetchContent_Declare(
+    freetype
+    GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype
+    GIT_TAG VER-2-13-3
+)
+FetchContent_MakeAvailable(freetype)
 
 include_directories(include/)
 include_directories(${glm_SOURCE_DIR})
+include_directories(${freetype_SOURCE_DIR}/include)
 
 file(GLOB_RECURSE CPP_SRC_FILES src/*.cpp src/*.c include/*.c)
 
 add_executable(GLFramework ${CPP_SRC_FILES})
 # target_link_libraries(GLFramework PRIVATE SDL2::SDL2main)
 target_link_libraries(GLFramework PRIVATE SDL2::SDL2)
-target_link_libraries(GLFramework PRIVATE ${FREETYPE_LIBRARIES})
-target_include_directories(GLFramework PRIVATE ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(GLFramework PRIVATE freetype)
+# target_include_directories(GLFramework PRIVATE ${freetype_INCLUDE_DIRS})
 # target_link_libraries(GLFramework PRIVATE SDL2_image::SDL2_image)
 # target_link_libraries(GLFramework PRIVATE SDL2_ttf::SDL2_ttf)
 target_compile_features(GLFramework PRIVATE cxx_std_20)

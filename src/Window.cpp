@@ -7,11 +7,13 @@ pl::Window::Window()
     initialised = false;
     window = nullptr;
     glContext = nullptr;
+    updateFunction = nullptr;
 }
 
 pl::Window::Window(const std::string& title, int width, int height, uint32_t flags)
 {
     initialised = false;
+    updateFunction = nullptr;
     create(title, width, height, flags);
 }
 
