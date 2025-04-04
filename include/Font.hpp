@@ -2,6 +2,8 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_OUTLINE_H
+#include FT_STROKER_H
 #include <gl.h>
 #include <SDL.h>
 
@@ -30,10 +32,10 @@ public:
 
     bool loadFromFile(const std::string& fontPath);
 
-    void draw(RenderTarget& renderTarget, const Shader& shader, const TextDrawData& drawData);
+    void draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData);
 
 private:
-    bool createCharacterSet(uint32_t size);
+    bool createCharacterSet(uint32_t size, uint32_t outline);
 
     static inline const int CHAR_COUNT = 128;
     static inline const uint32_t MAX_TEXTURE_WIDTH = 2048;
@@ -56,9 +58,12 @@ private:
     {
         std::unordered_map<char, Character> characterData;
         GLuint texture;
+        uint32_t textureWidth, textureHeight;
     };
 
     std::unordered_map<uint32_t, CharacterSet> renderedCharacterSets;
+
+    std::unordered_map<uint32_t, std::unordered_map<uint32_t, CharacterSet>> renderedOutlineCharacterSets;
 
 };
 

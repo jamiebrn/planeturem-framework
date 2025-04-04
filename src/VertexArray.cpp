@@ -29,14 +29,34 @@ void pl::VertexArray::addVertex(const Vertex& vertex)
     vertices.push_back(vertex);
 }
 
+void pl::VertexArray::addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV)
+{
+    addVertex(Vertex(quad.getPosition(), color, textureUV.getPosition()));
+    addVertex(Vertex(quad.getPosition() + Vector2f(quad.width, 0), color, textureUV.getPosition() + Vector2f(textureUV.width, 0)));
+    addVertex(Vertex(quad.getPosition() + Vector2f(0, quad.height), color, textureUV.getPosition() + Vector2f(0, textureUV.height)));
+    addVertex(Vertex(quad.getPosition() + Vector2f(quad.width, 0), color, textureUV.getPosition() + Vector2f(textureUV.width, 0)));
+    addVertex(Vertex(quad.getPosition() + quad.getSize(), color, textureUV.getPosition() + textureUV.getSize()));
+    addVertex(Vertex(quad.getPosition() + Vector2f(0, quad.height), color, textureUV.getPosition() + Vector2f(0, textureUV.height)));
+}
+
 void pl::VertexArray::setVertexData(const std::vector<Vertex> vertices)
 {
     this->vertices = vertices;
 }
 
+void pl::VertexArray::appendVertexArray(const VertexArray& vertexArray)
+{
+    vertices.insert(vertices.end(), vertexArray.getVertexData().begin(), vertexArray.getVertexData().end());
+}
+
 void pl::VertexArray::clear()
 {
     vertices.clear();
+}
+
+const std::vector<pl::Vertex>& pl::VertexArray::getVertexData() const
+{
+    return vertices;
 }
 
 int pl::VertexArray::size()

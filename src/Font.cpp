@@ -25,6 +25,14 @@ pl::Font::~Font()
     {
         glDeleteTextures(1, &characterSet.second.texture);
     }
+
+    for (auto& outlineCharacterSets : renderedOutlineCharacterSets)
+    {
+        for (auto& outlineCharacterSet : outlineCharacterSets.second)
+        {
+            glDeleteTextures(1, &outlineCharacterSet.second.texture);
+        }
+    }
 }
 
 bool pl::Font::loadFromFile(const std::string& fontPath)
@@ -47,11 +55,11 @@ bool pl::Font::loadFromFile(const std::string& fontPath)
     return true;
 }
 
-void pl::Font::draw(RenderTarget& renderTarget, const Shader& shader, const TextDrawData& drawData)
+void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData)
 {
-    if (!createCharacterSet(drawData.size))
+    if (!createCharacterSet(drawData.size, drawData.outlineThickness))
     {
-        printf("ERROR: Failed to create character set of size %d\n", drawData.size);
+        printf("ERROR: Failed to create character set of size %d, outline %d\n", drawData.size, drawData.outlineThickness);
         return;
     }
 
@@ -62,6 +70,7 @@ void pl::Font::draw(RenderTarget& renderTarget, const Shader& shader, const Text
 
     Vector2f textPos = drawData.position;
 
+    VertexArray outlineFontVertices;
     VertexArray fontVertices;
     for (char character : drawData.text)
     {
@@ -77,39 +86,19 @@ void pl::Font::draw(RenderTarget& renderTarget, const Shader& shader, const Text
         float xPos = textPos.x + characterData.bearing.x;
         float yPos = textPos.y + drawData.size - characterData.bearing.y;
 
-        fontVertices.addVertex(Vertex(
-            Vector2f(xPos, yPos),
-            drawData.color,
-            characterData.textureUV.getPosition()
-        ));
-        fontVertices.addVertex(Vertex(
-            Vector2f(xPos + characterData.size.x, yPos),
-            drawData.color,
-            characterData.textureUV.getPosition() + Vector2f(characterData.textureUV.width, 0)
-        ));
-        fontVertices.addVertex(Vertex(
-            Vector2f(xPos, yPos + characterData.size.y),
-            drawData.color,
-            characterData.textureUV.getPosition() + Vector2f(0, characterData.textureUV.height)
-        ));
-        fontVertices.addVertex(Vertex(
-            Vector2f(xPos + characterData.size.x, yPos),
-            drawData.color,
-            characterData.textureUV.getPosition() + Vector2f(characterData.textureUV.width, 0)
-        ));
-        fontVertices.addVertex(Vertex(
-            Vector2f(xPos + characterData.size.x, yPos + characterData.size.y),
-            drawData.color,
-            characterData.textureUV.getPosition() + characterData.textureUV.getSize()
-        ));
-        fontVertices.addVertex(Vertex(
-            Vector2f(xPos, yPos + characterData.size.y),
-            drawData.color,
-            characterData.textureUV.getPosition() + Vector2f(0, characterData.textureUV.height)
-        ));
+        if (drawData.outlineThickness > 0)
+        {
+
+        }
+
+        fontVertices.addQuad(Rect<float>(xPos, yPos, characterData.size.x, characterData.size.y), drawData.color,
+            Rect<float>(characterData.textureUV.x / characterSet.textureWidth, characterData.textureUV.y / characterSet.textureHeight,
+                        characterData.textureUV.width / characterSet.textureWidth, characterData.textureUV.height / characterSet.textureHeight));
 
         textPos.x += characterData.advance >> 6;
     }
+
+    outlineFontVertices.appendVertexArray(fontVertices);
 
     glBindTexture(GL_TEXTURE_2D, characterSet.texture);
 
@@ -118,16 +107,26 @@ void pl::Font::draw(RenderTarget& renderTarget, const Shader& shader, const Text
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    fontVertices.draw(renderTarget);
+    outlineFontVertices.draw(renderTarget);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-bool pl::Font::createCharacterSet(uint32_t size)
+bool pl::Font::createCharacterSet(uint32_t size, uint32_t outline)
 {
-    if (renderedCharacterSets.contains(size))
+    if (outline <= 0)
     {
-        return true;
+        if (renderedCharacterSets.contains(size))
+        {
+            return true;
+        }
+    }
+    else
+    {
+        if (renderedOutlineCharacterSets[size].contains(outline))
+        {
+            return true;
+        }
     }
     
     FT_Set_Pixel_Sizes(fontFace, 0, size);
@@ -153,10 +152,10 @@ bool pl::Font::createCharacterSet(uint32_t size)
         character.size = Vector2<int>(fontFace->glyph->bitmap.width, fontFace->glyph->bitmap.rows);
         character.bearing = Vector2<int>(fontFace->glyph->bitmap_left, fontFace->glyph->bitmap_top);
         character.advance = fontFace->glyph->advance.x;
-        character.textureUV.x = textureIdxX * size / static_cast<float>(textureWidth);
-        character.textureUV.y = textureIdxY * size / static_cast<float>(textureHeight);
-        character.textureUV.width = fontFace->glyph->bitmap.width / static_cast<float>(textureWidth);
-        character.textureUV.height = fontFace->glyph->bitmap.rows / static_cast<float>(textureHeight);
+        character.textureUV.x = textureIdxX * size;
+        character.textureUV.y = textureIdxY * size;
+        character.textureUV.width = fontFace->glyph->bitmap.width;
+        character.textureUV.height = fontFace->glyph->bitmap.rows;
 
         for (int charY = 0; charY < character.size.y; charY++)
         {
@@ -166,6 +165,7 @@ bool pl::Font::createCharacterSet(uint32_t size)
             if (rowIdx >= renderedGlyphs.size())
             {
                 renderedGlyphs.resize(renderedGlyphs.size() + textureWidth * size);
+                textureHeight += size;
             }
 
             uint8_t* glyphRow = &renderedGlyphs[rowIdx];
@@ -182,6 +182,9 @@ bool pl::Font::createCharacterSet(uint32_t size)
             textureIdxY++;
         }
     }
+
+    characterSet.textureHeight = textureHeight;
+    characterSet.textureWidth = textureWidth;
 
     glGenTextures(1, &characterSet.texture);
     glBindTexture(GL_TEXTURE_2D, characterSet.texture);

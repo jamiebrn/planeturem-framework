@@ -40,6 +40,8 @@ int main(int argc, char* argv[])
         positions.push_back(pl::Vector2f(rand() % 800, rand() % 600));
     }
 
+    int outlineThickness = 0;
+
     std::chrono::high_resolution_clock timeClock;
     auto nowTime = timeClock.now();
     auto lastTime = nowTime;
@@ -62,27 +64,32 @@ int main(int argc, char* argv[])
                     window.toggleFullscreen();
                 }
             }
+
+            if (event.type == SDL_MOUSEWHEEL)
+            {
+                outlineThickness = std::max(outlineThickness + event.wheel.y, 1);
+            }
         }
 
         window.clear({0, 0, 0, 255});
 
-        pl::SpriteBatch spriteBatch;
-        spriteBatch.beginDrawing();
+        // pl::SpriteBatch spriteBatch;
+        // spriteBatch.beginDrawing();
         
-        for (int i = 0; i < positions.size(); i++)
-        {
-            pl::DrawData drawData;
-            drawData.shader = &shader;
-            drawData.texture = &texture;
-            drawData.position = positions[i];
-            drawData.scale = pl::Vector2f(0.5, 0.5);
-            drawData.textureRect = {0, 0, 256, 256};
-            drawData.centerRatio = pl::Vector2f(0.5, 0.5);
-            drawData.rotation = (gameTime + i) * 30;
-            spriteBatch.draw(window, drawData);
-        }
+        // for (int i = 0; i < positions.size(); i++)
+        // {
+        //     pl::DrawData drawData;
+        //     drawData.shader = &shader;
+        //     drawData.texture = &texture;
+        //     drawData.position = positions[i];
+        //     drawData.scale = pl::Vector2f(0.5, 0.5);
+        //     drawData.textureRect = {0, 0, 256, 256};
+        //     drawData.centerRatio = pl::Vector2f(0.5, 0.5);
+        //     drawData.rotation = (gameTime + i) * 30;
+        //     spriteBatch.draw(window, drawData);
+        // }
         
-        spriteBatch.endDrawing(window);
+        // spriteBatch.endDrawing(window);
 
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
@@ -90,8 +97,9 @@ int main(int argc, char* argv[])
         pl::TextDrawData drawData;
         drawData.position = pl::Vector2f(mouseX, mouseY);
         drawData.text = "Select";
-        drawData.size = 32;
-        drawData.color = pl::Color(1, 1, 1, 1);
+        drawData.size = 32 + outlineThickness;
+        drawData.outlineColor = pl::Color(1, 1, 1, 1);
+        drawData.color = pl::Color(46, 34, 47).normalise();
 
         font.draw(window, fontShader, drawData);
 

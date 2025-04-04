@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Vertex.hpp"
+#include "Rect.hpp"
 #include "RenderTarget.hpp"
 
 namespace pl
@@ -17,8 +18,12 @@ public:
     ~VertexArray();
 
     void addVertex(const Vertex& vertex);
+    void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV);
     void setVertexData(const std::vector<Vertex> vertices);
+    void appendVertexArray(const VertexArray& vertexArray);
     void clear();
+
+    const std::vector<Vertex>& getVertexData() const;
 
     int size();
 
