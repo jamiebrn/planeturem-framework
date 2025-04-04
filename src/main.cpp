@@ -97,7 +97,8 @@ int main(int argc, char* argv[])
         pl::TextDrawData drawData;
         drawData.position = pl::Vector2f(mouseX, mouseY);
         drawData.text = "Select";
-        drawData.size = 32 + outlineThickness;
+        drawData.size = 32;
+        drawData.outlineThickness = outlineThickness;
         drawData.outlineColor = pl::Color(1, 1, 1, 1);
         drawData.color = pl::Color(46, 34, 47).normalise();
 

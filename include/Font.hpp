@@ -43,6 +43,7 @@ private:
     static FT_Library freetype;
 
     FT_Face fontFace;
+    FT_Stroker fontStroker;
 
     struct Character
     {

@@ -20,6 +20,7 @@ pl::Font::~Font()
     }
 
     FT_Done_Face(fontFace);
+    FT_Stroker_Done(fontStroker);
 
     for (auto& characterSet : renderedCharacterSets)
     {
@@ -51,16 +52,31 @@ bool pl::Font::loadFromFile(const std::string& fontPath)
         printf(("ERROR: Failed to load font " + fontPath + "\n").c_str());
         return false;
     }
+    
+    if (FT_Stroker_New(freetype, &fontStroker))
+    {
+        printf(("ERROR: Failed to load font stroker " + fontPath + "\n").c_str());
+        FT_Done_Face(fontFace);
+        return false;
+    }
 
     return true;
 }
 
 void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData)
 {
-    if (!createCharacterSet(drawData.size, drawData.outlineThickness))
+    if (!createCharacterSet(drawData.size, 0))
     {
-        printf("ERROR: Failed to create character set of size %d, outline %d\n", drawData.size, drawData.outlineThickness);
+        printf("ERROR: Failed to create character set of size %d, outline 0\n", drawData.size);
         return;
+    }
+    if (drawData.outlineThickness > 0)
+    {
+        if (!createCharacterSet(drawData.size, drawData.outlineThickness))
+        {
+            printf("ERROR: Failed to create character set of size %d, outline %d\n", drawData.size, drawData.outlineThickness);
+            return;
+        }
     }
 
     renderTarget.bind();
@@ -88,17 +104,35 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
         if (drawData.outlineThickness > 0)
         {
+            const CharacterSet& outlineCharacterSet = renderedOutlineCharacterSets.at(drawData.size).at(drawData.outlineThickness);
+            const Character& characterOutlineData = outlineCharacterSet.characterData.at(character);
 
+            outlineFontVertices.addQuad(Rect<float>(xPos - (characterOutlineData.size.x - characterData.size.x) / 2,
+                                                    yPos - (characterOutlineData.size.y - characterData.size.y) / 2,
+                        characterOutlineData.size.x, characterOutlineData.size.y), drawData.outlineColor,
+            Rect<float>(characterOutlineData.textureUV.x / outlineCharacterSet.textureWidth, characterOutlineData.textureUV.y / outlineCharacterSet.textureHeight,
+                        characterOutlineData.textureUV.width / outlineCharacterSet.textureWidth, characterOutlineData.textureUV.height / outlineCharacterSet.textureHeight));
         }
 
         fontVertices.addQuad(Rect<float>(xPos, yPos, characterData.size.x, characterData.size.y), drawData.color,
             Rect<float>(characterData.textureUV.x / characterSet.textureWidth, characterData.textureUV.y / characterSet.textureHeight,
                         characterData.textureUV.width / characterSet.textureWidth, characterData.textureUV.height / characterSet.textureHeight));
 
-        textPos.x += characterData.advance >> 6;
+        textPos.x += characterData.advance >> 16;
     }
 
-    outlineFontVertices.appendVertexArray(fontVertices);
+    if (outlineFontVertices.size() > 0)
+    {
+        const CharacterSet& outlineCharacterSet = renderedOutlineCharacterSets.at(drawData.size).at(drawData.outlineThickness);
+        glBindTexture(GL_TEXTURE_2D, outlineCharacterSet.texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, drawData.smoothing ? GL_LINEAR : GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, drawData.smoothing ? GL_LINEAR : GL_NEAREST);
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        outlineFontVertices.draw(renderTarget);
+    }
 
     glBindTexture(GL_TEXTURE_2D, characterSet.texture);
 
@@ -107,7 +141,7 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    outlineFontVertices.draw(renderTarget);
+    fontVertices.draw(renderTarget);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -131,8 +165,10 @@ bool pl::Font::createCharacterSet(uint32_t size, uint32_t outline)
     
     FT_Set_Pixel_Sizes(fontFace, 0, size);
 
-    int textureWidth = std::min(size * CHAR_COUNT, MAX_TEXTURE_WIDTH);
-    int textureHeight = std::ceil(CHAR_COUNT / std::floor(textureWidth / size)) * size;
+    uint32_t charSize = size + outline * 2;
+
+    int textureWidth = std::min(charSize * CHAR_COUNT, MAX_TEXTURE_WIDTH);
+    int textureHeight = std::ceil(CHAR_COUNT / std::floor(textureWidth / charSize)) * charSize;
 
     std::vector<uint8_t> renderedGlyphs(textureWidth * textureHeight, 0);
     
@@ -141,42 +177,63 @@ bool pl::Font::createCharacterSet(uint32_t size, uint32_t outline)
     int textureIdxX = 0;
     int textureIdxY = 0;
 
+    int32_t loadFlags = FT_LOAD_TARGET_NORMAL | FT_LOAD_FORCE_AUTOHINT;
+    if (outline != 0)
+    {
+        loadFlags |= FT_LOAD_NO_BITMAP;
+    }
+
     for (uint32_t i = 0; i < CHAR_COUNT; i++)
     {
-        if (FT_Load_Char(fontFace, i, FT_LOAD_RENDER))
+        if (FT_Load_Char(fontFace, i, loadFlags))
         {
             return false;
         }
-        
+
+        FT_Glyph glyph;
+        if (FT_Get_Glyph(fontFace->glyph, &glyph))
+        {
+            return false;
+        }
+
+        if (outline != 0 && glyph->format == FT_GLYPH_FORMAT_OUTLINE)
+        {
+            FT_Stroker_Set(fontStroker, outline << 6, FT_STROKER_LINECAP_ROUND, FT_STROKER_LINEJOIN_ROUND, 0);
+            FT_Glyph_Stroke(&glyph, fontStroker, true);
+        }
+
+        FT_Glyph_To_Bitmap(&glyph, FT_RENDER_MODE_NORMAL, 0, true);
+        FT_BitmapGlyph bitmapGlyph = reinterpret_cast<FT_BitmapGlyph>(glyph);
+
         Character character;
-        character.size = Vector2<int>(fontFace->glyph->bitmap.width, fontFace->glyph->bitmap.rows);
-        character.bearing = Vector2<int>(fontFace->glyph->bitmap_left, fontFace->glyph->bitmap_top);
-        character.advance = fontFace->glyph->advance.x;
-        character.textureUV.x = textureIdxX * size;
-        character.textureUV.y = textureIdxY * size;
-        character.textureUV.width = fontFace->glyph->bitmap.width;
-        character.textureUV.height = fontFace->glyph->bitmap.rows;
+        character.size = Vector2<int>(bitmapGlyph->bitmap.width, bitmapGlyph->bitmap.rows);
+        character.bearing = Vector2<int>(bitmapGlyph->left, bitmapGlyph->top);
+        character.advance = bitmapGlyph->root.advance.x;
+        character.textureUV.x = textureIdxX * charSize;
+        character.textureUV.y = textureIdxY * charSize;
+        character.textureUV.width = bitmapGlyph->bitmap.width;
+        character.textureUV.height = bitmapGlyph->bitmap.rows;
 
         for (int charY = 0; charY < character.size.y; charY++)
         {
-            uint32_t rowIdx = (textureIdxY * size + charY) * textureWidth + textureIdxX * size;
+            uint32_t rowIdx = (textureIdxY * charSize + charY) * textureWidth + textureIdxX * charSize;
 
             // Add another row if required
             if (rowIdx >= renderedGlyphs.size())
             {
-                renderedGlyphs.resize(renderedGlyphs.size() + textureWidth * size);
-                textureHeight += size;
+                renderedGlyphs.resize(renderedGlyphs.size() + textureWidth * charSize);
+                textureHeight += charSize;
             }
 
             uint8_t* glyphRow = &renderedGlyphs[rowIdx];
 
-            memcpy(glyphRow, &fontFace->glyph->bitmap.buffer[character.size.x * charY], character.size.x);
+            memcpy(glyphRow, &bitmapGlyph->bitmap.buffer[character.size.x * charY], character.size.x);
         }
 
         characterSet.characterData[i] = character;
 
         textureIdxX++;
-        if (textureIdxX * size > textureWidth - size)
+        if (textureIdxX * charSize > textureWidth - charSize)
         {
             textureIdxX = 0;
             textureIdxY++;
@@ -198,7 +255,14 @@ bool pl::Font::createCharacterSet(uint32_t size, uint32_t outline)
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 
-    renderedCharacterSets[size] = characterSet;
+    if (outline == 0)
+    {
+        renderedCharacterSets[size] = characterSet;
+    }
+    else
+    {
+        renderedOutlineCharacterSets[size][outline] = characterSet;
+    }
 
     return true;
 }
