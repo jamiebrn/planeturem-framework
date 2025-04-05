@@ -14,11 +14,6 @@ pl::Texture::~Texture()
 
 bool pl::Texture::loadTexture(const std::string& texturePath, bool mipmap)
 {
-    if (textureId == 0)
-    {
-        glGenTextures(1, &textureId);
-    }
-
     Image image;
 
     if (!image.loadFromFile(texturePath))
@@ -27,24 +22,35 @@ bool pl::Texture::loadTexture(const std::string& texturePath, bool mipmap)
         return false;
     }
 
-    width = image.getWidth();
-    height = image.getHeight();
+    return loadTexture(image.getPixelPtr(), image.getWidth(), image.getHeight(), mipmap);
+}
+
+bool pl::Texture::loadTexture(uint8_t* pixels, int width, int height, bool mipmap)
+{
+    this->width = width;
+    this->height = height;
+
+    if (textureId == 0)
+    {
+        glGenTextures(1, &textureId);
+    }
 
     glBindTexture(GL_TEXTURE_2D, textureId);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelPtr());
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     if (mipmap)
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
     {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -76,6 +82,7 @@ void pl::Texture::setLinearFilter(bool value)
 
     glBindTexture(GL_TEXTURE_2D, textureId);
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, value ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, value ? GL_LINEAR : GL_NEAREST);
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -91,9 +98,11 @@ int pl::Texture::getHeight() const
     return height;
 }
 
-void pl::Texture::use() const
+void pl::Texture::use(int unit) const
 {
+    glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, textureId);
+    glActiveTexture(GL_TEXTURE0);
 }
 
 GLuint pl::Texture::getID()

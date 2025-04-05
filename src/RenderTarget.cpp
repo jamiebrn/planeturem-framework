@@ -13,7 +13,7 @@ void pl::RenderTarget::clear(const Color& color)
 void pl::RenderTarget::draw(const VertexArray& vertexArray, const Shader& shader, const Texture& texture, BlendMode blendMode)
 {
     bind();
-    shader.use();
+    shader.bind();
     texture.use();
 
     switch (blendMode)

@@ -32,6 +32,7 @@ public:
     void close();
 
     void toggleFullscreen();
+    void setVSync(bool enabled);
 
     int pollEvent(SDL_Event& event);
 

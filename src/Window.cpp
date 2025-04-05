@@ -61,6 +61,11 @@ void pl::Window::toggleFullscreen()
     create(std::string(title), nonFullscreenWidth, nonFullscreenHeight, windowFlags);
 }
 
+void pl::Window::setVSync(bool enabled)
+{
+    SDL_GL_SetSwapInterval(enabled);
+}
+
 void pl::Window::setIcon(const Image& image)
 {
     SDL_Surface* surface = SDL_CreateRGBSurfaceFrom(image.getPixelPtr(), image.getWidth(), image.getHeight(), 32, image.getWidth() * 4, 0xFF, 0xFF00, 0xFF0000, 0xFF000000);

@@ -29,7 +29,8 @@ void pl::SpriteBatch::draw(RenderTarget& window, const DrawData& drawData)
 
         if (vertexArray.size() > 0)
         {
-            printf("WARNING: SpriteBatch batch type has been reset mid-batch\n");
+            printf("WARNING: SpriteBatch batch type has been reset mid-batch. Resetting data\n");
+            vertexArray.clear();
         }
     }
 

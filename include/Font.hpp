@@ -48,10 +48,9 @@ private:
 
     struct Character
     {
-        // unsigned int textureID;  // ID handle of the glyph texture
-        Vector2<int> size;       // Size of glyph
-        Vector2<int> bearing;    // Offset from baseline to left/top of glyph
-        uint32_t advance;    // Offset to advance to next glyph
+        Vector2<int> size;
+        Vector2<int> bearing;
+        uint32_t advance;
 
         Rect<float> textureUV;
     };

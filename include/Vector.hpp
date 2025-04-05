@@ -68,4 +68,27 @@ struct Vector2
 
 typedef Vector2<float> Vector2f;
 
+template <class T>
+struct Vector3
+{
+    T x;
+    T y;
+    T z;
+
+    Vector3() = default;
+    Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
+};
+
+template <class T>
+struct Vector4
+{
+    T x;
+    T y;
+    T z;
+    T w;
+
+    Vector4() = default;
+    Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
+};
+
 }

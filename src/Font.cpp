@@ -86,7 +86,7 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
     }
 
     renderTarget.bind();
-    shader.use();
+    shader.bind();
 
     const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
 

@@ -89,7 +89,7 @@ bool pl::Shader::load(const std::string& vertexPath, const std::string& fragPath
     return true;
 }
 
-void pl::Shader::use() const
+void pl::Shader::bind() const
 {
     if (shaderProgram == 0)
     {
@@ -97,9 +97,325 @@ void pl::Shader::use() const
     }
 
     glUseProgram(shaderProgram);
+
+    int textureIdx = 1;
+    for (auto iter = textureBindings.begin(); iter != textureBindings.end(); iter++)
+    {
+        glUniform1i(iter->first, textureIdx);
+        iter->second->use(textureIdx);
+        textureIdx++;
+    }
+
+    glActiveTexture(GL_TEXTURE0);
 }
 
 GLuint pl::Shader::getProgram()
 {
     return shaderProgram;
+}
+
+int pl::Shader::getUniformLocation(const std::string& uniformName)
+{
+    if (uniformLocations.contains(uniformName))
+    {
+        return uniformLocations.at(uniformName);
+    }
+
+    int location = glGetUniformLocation(shaderProgram, uniformName.c_str());
+
+    if (location < 0)
+    {
+        printf(("ERROR: Could not find uniform \"" + uniformName + "\"\n").c_str());
+    }
+    else
+    {
+        uniformLocations[uniformName] = location;
+    }
+
+    return location;
+}
+
+void pl::Shader::setUniform1f(const std::string& name, float v0)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform1f(location, v0);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform2f(const std::string& name, float v0, float v1)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform2f(location, v0, v1);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform3f(const std::string& name, float v0, float v1, float v2)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform3f(location, v0, v1, v2);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform4f(location, v0, v1, v2, v3);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform1i(const std::string& name, int v0)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform1i(location, v0);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform2i(const std::string& name, int v0, int v1)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform2i(location, v0, v1);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform3i(const std::string& name, int v0, int v1, int v2)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform3i(location, v0, v1, v2);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform4i(const std::string& name, int v0, int v1, int v2, int v3)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform4i(location, v0, v1, v2, v3);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform1ui(const std::string& name, uint32_t v0)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform1ui(location, v0);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform2ui(const std::string& name, uint32_t v0, uint32_t v1)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform2ui(location, v0, v1);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform3ui(const std::string& name, uint32_t v0, uint32_t v1, uint32_t v2)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform3ui(location, v0, v1, v2);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform4ui(const std::string& name, uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform4ui(location, v0, v1, v2, v3);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform1fv(const std::string& name, const std::vector<float>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform1fv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform2fv(const std::string& name, const std::vector<float>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform2fv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform3fv(const std::string& name, const std::vector<float>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform3fv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform4fv(const std::string& name, const std::vector<float>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform4fv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform1iv(const std::string& name, const std::vector<int>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform1iv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform2iv(const std::string& name, const std::vector<int>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform2iv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform3iv(const std::string& name, const std::vector<int>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform3iv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform4iv(const std::string& name, const std::vector<int>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform4iv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform1uiv(const std::string& name, const std::vector<uint32_t>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform1uiv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform2uiv(const std::string& name, const std::vector<uint32_t>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform2uiv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform3uiv(const std::string& name, const std::vector<uint32_t>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform3uiv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniform4uiv(const std::string& name, const std::vector<uint32_t>& values)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        glUniform4uiv(location, values.size(), values.data());
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniformColor(const std::string& name, const Color& color)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        glUseProgram(shaderProgram);
+        Color colorNormalised = color.normalise();
+        glUniform4f(location, colorNormalised.r, colorNormalised.g, colorNormalised.b, colorNormalised.a);
+    }
+    glUseProgram(0);
+}
+
+void pl::Shader::setUniformTexture(const std::string& name, const Texture& texture)
+{
+    int location = getUniformLocation(name);
+    if (location >= 0)
+    {
+        textureBindings[location] = &texture;
+    }
 }

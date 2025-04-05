@@ -12,10 +12,13 @@
 
 int main(int argc, char* argv[])
 {
+    srand(time(NULL));
+
     pl::init();
 
     pl::Window window;
     window.create("GL-Framework", 800, 600, SDL_WINDOW_RESIZABLE);
+    window.setVSync(true);
 
     Image image;
     image.loadFromFile("Data/icon.png");
@@ -28,6 +31,8 @@ int main(int argc, char* argv[])
 
     pl::Texture texture;
     texture.loadTexture("Data/icon.png");
+    texture.setTextureRepeat(true);
+    texture.setLinearFilter(false);
 
     pl::Font font;
     pl::Shader fontShader;
@@ -73,23 +78,23 @@ int main(int argc, char* argv[])
 
         window.clear({0, 0, 0, 255});
 
-        // pl::SpriteBatch spriteBatch;
-        // spriteBatch.beginDrawing();
+        pl::SpriteBatch spriteBatch;
+        spriteBatch.beginDrawing();
         
-        // for (int i = 0; i < positions.size(); i++)
-        // {
-        //     pl::DrawData drawData;
-        //     drawData.shader = &shader;
-        //     drawData.texture = &texture;
-        //     drawData.position = positions[i];
-        //     drawData.scale = pl::Vector2f(0.5, 0.5);
-        //     drawData.textureRect = {0, 0, 256, 256};
-        //     drawData.centerRatio = pl::Vector2f(0.5, 0.5);
-        //     drawData.rotation = (gameTime + i) * 30;
-        //     spriteBatch.draw(window, drawData);
-        // }
+        for (int i = 0; i < positions.size(); i++)
+        {
+            pl::DrawData drawData;
+            drawData.shader = &shader;
+            drawData.texture = &texture;
+            drawData.position = positions[i];
+            drawData.scale = pl::Vector2f(0.5, 0.5);
+            drawData.textureRect = {0, 0, 256, 256};
+            drawData.centerRatio = pl::Vector2f(0.5, 0.5);
+            drawData.rotation = (gameTime + i) * 30;
+            spriteBatch.draw(window, drawData);
+        }
         
-        // spriteBatch.endDrawing(window);
+        spriteBatch.endDrawing(window);
 
         window.swapBuffers();
 
