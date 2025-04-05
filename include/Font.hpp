@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "Vector.hpp"
 #include "Rect.hpp"
@@ -35,10 +36,10 @@ public:
     void draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData);
 
 private:
-    bool createCharacterSet(uint32_t size, uint32_t outline);
+    bool createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyphChars, uint32_t size, uint32_t outline);
 
     static inline const int CHAR_COUNT = 128;
-    static inline const uint32_t MAX_TEXTURE_WIDTH = 2048;
+    static inline const uint32_t TEXTURE_WIDTH = 2048;
 
     static FT_Library freetype;
 
@@ -57,9 +58,15 @@ private:
 
     struct CharacterSet
     {
-        std::unordered_map<char, Character> characterData;
+        std::unordered_map<uint8_t, Character> characterData;
+
+        std::vector<uint8_t> renderedGlyphsBitmap;
+        std::unordered_set<uint8_t> renderedGlyphs;
+        uint32_t textureRenderIdxX = 0;
+        uint32_t textureRenderIdxY = 0;
+        
         GLuint texture;
-        uint32_t textureWidth, textureHeight;
+        uint32_t textureHeight = 0;
     };
 
     std::unordered_map<uint32_t, CharacterSet> renderedCharacterSets;
