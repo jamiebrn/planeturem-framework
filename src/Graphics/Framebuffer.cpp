@@ -1,4 +1,4 @@
-#include "Framebuffer.hpp"
+#include "Graphics/Framebuffer.hpp"
 
 pl::Framebuffer::~Framebuffer()
 {

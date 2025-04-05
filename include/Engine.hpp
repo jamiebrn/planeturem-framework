@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gl.h>
+#include <extlib/gl.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 

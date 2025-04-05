@@ -1,10 +1,10 @@
 #pragma once
 
-#include <gl.h>
+#include <extlib/gl.h>
 #include <string>
 #include <iostream>
 
-#include "Image.hpp"
+#include "Graphics/Image.hpp"
 
 namespace pl
 {

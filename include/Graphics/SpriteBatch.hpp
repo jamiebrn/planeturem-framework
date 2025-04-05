@@ -5,12 +5,12 @@
 #include <stdio.h>
 
 #include "Vector.hpp"
-#include "Texture.hpp"
-#include "Shader.hpp"
-#include "RenderTarget.hpp"
-#include "DrawData.hpp"
+#include "Graphics/Texture.hpp"
+#include "Graphics/Shader.hpp"
+#include "Graphics/RenderTarget.hpp"
+#include "Graphics/DrawData.hpp"
 #include "Rect.hpp"
-#include "VertexArray.hpp"
+#include "Graphics/VertexArray.hpp"
 
 namespace pl
 {

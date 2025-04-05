@@ -53,7 +53,7 @@ include_directories(include/)
 include_directories(${glm_SOURCE_DIR})
 include_directories(${freetype_SOURCE_DIR}/include)
 
-file(GLOB_RECURSE CPP_SRC_FILES src/*.cpp src/*.c include/*.c)
+file(GLOB_RECURSE CPP_SRC_FILES src/*.cpp src/*.c)
 
 add_executable(GLFramework ${CPP_SRC_FILES})
 # target_link_libraries(GLFramework PRIVATE SDL2::SDL2main)

@@ -1,7 +1,7 @@
-#include "RenderTarget.hpp"
-#include "Shader.hpp"
-#include "Texture.hpp"
-#include "VertexArray.hpp"
+#include "Graphics/RenderTarget.hpp"
+#include "Graphics/Shader.hpp"
+#include "Graphics/Texture.hpp"
+#include "Graphics/VertexArray.hpp"
 
 void pl::RenderTarget::clear(const Color& color)
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gl.h>
+#include <extlib/gl.h>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "Vector.hpp"
-#include "Color.hpp"
-#include "Texture.hpp"
+#include "Graphics/Color.hpp"
+#include "Graphics/Texture.hpp"
 
 namespace pl
 {

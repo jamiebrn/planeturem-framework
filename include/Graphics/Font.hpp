@@ -4,7 +4,7 @@
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 #include FT_STROKER_H
-#include <gl.h>
+#include <extlib/gl.h>
 #include <SDL.h>
 
 #include <stdio.h>
@@ -15,8 +15,8 @@
 
 #include "Vector.hpp"
 #include "Rect.hpp"
-#include "RenderTarget.hpp"
-#include "Shader.hpp"
+#include "Graphics/RenderTarget.hpp"
+#include "Graphics/Shader.hpp"
 #include "VertexArray.hpp"
 #include "TextDrawData.hpp"
 

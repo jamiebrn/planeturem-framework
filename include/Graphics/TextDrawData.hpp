@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Vector.hpp"
-#include "Color.hpp"
+#include "Graphics/Color.hpp"
 
 namespace pl
 {

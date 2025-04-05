@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gl.h>
+#include <extlib/gl.h>
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 
@@ -8,8 +8,8 @@
 #include <string>
 #include <chrono>
 
-#include "RenderTarget.hpp"
-#include "Image.hpp"
+#include "Graphics/RenderTarget.hpp"
+#include "Graphics/Image.hpp"
 
 namespace pl
 {

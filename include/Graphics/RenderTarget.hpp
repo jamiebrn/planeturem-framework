@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Color.hpp"
+#include "Graphics/Color.hpp"
 #include "BlendMode.hpp"
 
 namespace pl

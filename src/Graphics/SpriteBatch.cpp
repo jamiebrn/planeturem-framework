@@ -1,4 +1,4 @@
-#include "SpriteBatch.hpp"
+#include "Graphics/SpriteBatch.hpp"
 
 pl::SpriteBatch::SpriteBatch()
 {

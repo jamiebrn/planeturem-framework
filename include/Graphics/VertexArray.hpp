@@ -1,12 +1,12 @@
 #pragma once
 
-#include <gl.h>
+#include <extlib/gl.h>
 
 #include <vector>
 
-#include "Vertex.hpp"
+#include "Graphics/Vertex.hpp"
 #include "Rect.hpp"
-#include "RenderTarget.hpp"
+#include "Graphics/RenderTarget.hpp"
 
 namespace pl
 {

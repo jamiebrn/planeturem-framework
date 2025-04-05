@@ -1,4 +1,4 @@
-#include "Shader.hpp"
+#include "Graphics/Shader.hpp"
 
 pl::Shader::~Shader()
 {

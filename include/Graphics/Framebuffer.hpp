@@ -1,11 +1,11 @@
 #pragma once
 
-#include <gl.h>
+#include <extlib/gl.h>
 #include <cstdint>
 
-#include "RenderTarget.hpp"
-#include "Texture.hpp"
-#include "Color.hpp"
+#include "Graphics/RenderTarget.hpp"
+#include "Graphics/Texture.hpp"
+#include "Graphics/Color.hpp"
 
 namespace pl
 {

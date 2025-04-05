@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Shader.hpp"
-#include "Texture.hpp"
+#include "Graphics/Shader.hpp"
+#include "Graphics/Texture.hpp"
 #include "Vector.hpp"
-#include "Color.hpp"
+#include "Graphics/Color.hpp"
 #include "Rect.hpp"
 
 namespace pl

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <stb_image.h>
+#include <extlib/stb_image.h>
 
 #include <string>
 

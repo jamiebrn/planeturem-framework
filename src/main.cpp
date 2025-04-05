@@ -4,12 +4,12 @@
 
 #include "Engine.hpp"
 #include "Window.hpp"
-#include "Vertex.hpp"
-#include "Shader.hpp"
-#include "Texture.hpp"
-#include "SpriteBatch.hpp"
-#include "Framebuffer.hpp"
-#include "Font.hpp"
+#include "Graphics/Vertex.hpp"
+#include "Graphics/Shader.hpp"
+#include "Graphics/Texture.hpp"
+#include "Graphics/SpriteBatch.hpp"
+#include "Graphics/Framebuffer.hpp"
+#include "Graphics/Font.hpp"
 
 int main(int argc, char* argv[])
 {
