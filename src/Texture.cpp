@@ -58,6 +58,19 @@ bool pl::Texture::loadTexture(uint8_t* pixels, int width, int height, bool mipma
     return true;
 }
 
+void pl::Texture::setFromAllocated(GLuint textureId, int width, int height)
+{
+    if (textureId != 0)
+    {
+        glDeleteTextures(1, &this->textureId);
+    }
+
+    this->textureId = textureId;
+
+    this->width = width;
+    this->height = height;
+}
+
 void pl::Texture::setTextureRepeat(bool repeat)
 {
     if (textureId == 0)

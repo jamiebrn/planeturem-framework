@@ -8,6 +8,7 @@
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "SpriteBatch.hpp"
+#include "Framebuffer.hpp"
 #include "Font.hpp"
 
 int main(int argc, char* argv[])
@@ -38,6 +39,9 @@ int main(int argc, char* argv[])
     pl::Shader fontShader;
     font.loadFromFile("Data/upheavtt.ttf");
     fontShader.load("Data/default.vert", "Data/font.frag");
+
+    pl::Framebuffer framebuffer;
+    framebuffer.create(800, 600);
 
     std::vector<pl::Vector2f> positions;
     for (int i = 0; i < 1000; i++)
@@ -76,8 +80,8 @@ int main(int argc, char* argv[])
             }
         }
 
-        window.clear({0, 0, 0, 255});
-
+        framebuffer.clear({0, 0, 0, 255});
+        
         pl::SpriteBatch spriteBatch;
         spriteBatch.beginDrawing();
         
@@ -91,10 +95,19 @@ int main(int argc, char* argv[])
             drawData.textureRect = {0, 0, 256, 256};
             drawData.centerRatio = pl::Vector2f(0.5, 0.5);
             drawData.rotation = (gameTime + i) * 30;
-            spriteBatch.draw(window, drawData);
+            spriteBatch.draw(framebuffer, drawData);
         }
         
-        spriteBatch.endDrawing(window);
+        spriteBatch.endDrawing(framebuffer);
+
+        window.clear({0, 0, 0, 255});
+
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+        
+        pl::VertexArray vertexArray;
+        vertexArray.addQuad(pl::Rect<float>(0, 0, mouseX, mouseY), pl::Color(1, 1, 1, 1), pl::Rect<float>(0, 0, (float)mouseX / framebuffer.getWidth(), (float)mouseY / framebuffer.getHeight()));
+        window.draw(vertexArray, shader, framebuffer.getTexture(), pl::BlendMode::Alpha);
 
         window.swapBuffers();
 

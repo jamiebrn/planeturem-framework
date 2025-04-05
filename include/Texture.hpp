@@ -19,6 +19,8 @@ public:
     bool loadTexture(const std::string& texturePath, bool mipmap = false);
     bool loadTexture(uint8_t* pixels, int width, int height, bool mipmap = false);
 
+    void setFromAllocated(GLuint textureId, int width, int height);
+
     void setTextureRepeat(bool repeat);
     void setLinearFilter(bool value);
 
@@ -31,8 +33,8 @@ public:
 private:
     GLuint textureId = 0;
 
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
 
 };
 

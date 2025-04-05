@@ -6,7 +6,8 @@
 void pl::RenderTarget::clear(const Color& color)
 {
     bind();
-    glClearColor(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
+    Color colorNormalised = color.normalise();
+    glClearColor(colorNormalised.r, colorNormalised.g, colorNormalised.b, colorNormalised.a);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
