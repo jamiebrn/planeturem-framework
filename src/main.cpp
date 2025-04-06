@@ -10,6 +10,8 @@
 #include "Graphics/SpriteBatch.hpp"
 #include "Graphics/Framebuffer.hpp"
 #include "Graphics/Font.hpp"
+#include "Graphics/TextDrawData.hpp"
+#include "Audio/Sound.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -41,7 +43,6 @@ int main(int argc, char* argv[])
     fontShader.load("Data/default.vert", "Data/font.frag");
 
     pl::Framebuffer framebuffer;
-    framebuffer.create(800, 600);
 
     std::vector<pl::Vector2f> positions;
     for (int i = 0; i < 1000; i++)
@@ -80,6 +81,10 @@ int main(int argc, char* argv[])
             }
         }
 
+        int mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
+
+        framebuffer.create(mouseX, mouseY);
         framebuffer.clear({0, 0, 0, 255});
         
         pl::SpriteBatch spriteBatch;
@@ -101,13 +106,18 @@ int main(int argc, char* argv[])
         spriteBatch.endDrawing(framebuffer);
 
         window.clear({0, 0, 0, 255});
-
-        int mouseX, mouseY;
-        SDL_GetMouseState(&mouseX, &mouseY);
         
         pl::VertexArray vertexArray;
-        vertexArray.addQuad(pl::Rect<float>(0, 0, mouseX, mouseY), pl::Color(1, 1, 1, 1), pl::Rect<float>(0, 0, (float)mouseX / framebuffer.getWidth(), (float)mouseY / framebuffer.getHeight()));
+        vertexArray.addQuad(pl::Rect<float>(0, 0, mouseX, mouseY), pl::Color(1, 1, 1, 1), pl::Rect<float>(0, 0, (float)mouseX / 800, -(float)mouseY / 600));
         window.draw(vertexArray, shader, framebuffer.getTexture(), pl::BlendMode::Alpha);
+
+        pl::TextDrawData textDrawData;
+        textDrawData.position = pl::Vector2f(mouseX, mouseY);
+        textDrawData.color = pl::Color(1, 1, 1, 1);
+        textDrawData.size = 32;
+        textDrawData.text = std::to_string(mouseX) + ", " + std::to_string(mouseY);
+
+        font.draw(window, fontShader, textDrawData);
 
         window.swapBuffers();
 

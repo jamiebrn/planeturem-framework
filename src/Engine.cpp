@@ -11,5 +11,6 @@ void pl::init()
 
 void pl::deinit()
 {
+    Sound::deinit();
     SDL_Quit();
 }
