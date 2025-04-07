@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(GLFramework LANGUAGES CXX C)
+project(PlaneturemFramework LANGUAGES CXX C)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
@@ -67,14 +67,13 @@ include_directories(${vorbis_SOURCE_DIR}/include)
 
 file(GLOB_RECURSE CPP_SRC_FILES src/*.cpp src/*.c)
 
-add_executable(GLFramework ${CPP_SRC_FILES})
-# target_link_libraries(GLFramework PRIVATE SDL2::SDL2main)
-target_link_libraries(GLFramework PRIVATE SDL2::SDL2)
-target_link_libraries(GLFramework PRIVATE vorbis vorbisfile)
-target_link_libraries(GLFramework PRIVATE freetype)
-target_compile_features(GLFramework PRIVATE cxx_std_20)
+add_executable(PlaneturemFramework ${CPP_SRC_FILES})
+target_link_libraries(PlaneturemFramework PRIVATE SDL2::SDL2)
+target_link_libraries(PlaneturemFramework PRIVATE vorbis vorbisfile)
+target_link_libraries(PlaneturemFramework PRIVATE freetype)
+target_compile_features(PlaneturemFramework PRIVATE cxx_std_20)
 
 add_custom_target(copy_assets
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/assets ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Data
 )
-add_dependencies(GLFramework copy_assets)
+add_dependencies(PlaneturemFramework copy_assets)
