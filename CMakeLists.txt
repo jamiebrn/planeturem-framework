@@ -72,8 +72,3 @@ target_link_libraries(PlaneturemFramework PRIVATE SDL2::SDL2)
 target_link_libraries(PlaneturemFramework PRIVATE vorbis vorbisfile)
 target_link_libraries(PlaneturemFramework PRIVATE freetype)
 target_compile_features(PlaneturemFramework PRIVATE cxx_std_20)
-
-add_custom_target(copy_assets
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/assets ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Data
-)
-add_dependencies(PlaneturemFramework copy_assets)
