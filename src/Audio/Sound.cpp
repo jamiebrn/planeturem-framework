@@ -1,18 +1,13 @@
 #include "Audio/Sound.hpp"
 
+std::unique_ptr<ma_resource_manager> pl::Sound::resourceManager;
 std::unique_ptr<ma_engine> pl::Sound::soundEngine;
 
 pl::Sound::Sound()
 {
     if (!soundEngine)
     {
-        soundEngine = std::make_unique<ma_engine>();
-        ma_result result = ma_engine_init(NULL, soundEngine.get());
-        if (result != MA_SUCCESS)
-        {
-            printf("ERROR: Failed to initialise miniaudio\n");
-            soundEngine.reset();
-        }
+        initEngine();
     }
 }
 
@@ -24,12 +19,51 @@ pl::Sound::~Sound()
     }
 }
 
+void pl::Sound::initEngine()
+{
+    if (!resourceManager)
+    {
+        resourceManager = std::make_unique<ma_resource_manager>();
+        ma_resource_manager_config config = ma_resource_manager_config_init();
+        config.ppCustomDecodingBackendVTables = &ma_decoding_backend_libvorbis;
+        config.customDecodingBackendCount = 1;
+        config.pCustomDecodingBackendUserData = NULL;
+
+        ma_result result = ma_resource_manager_init(&config, resourceManager.get());
+        if (result != MA_SUCCESS)
+        {
+            printf("ERROR: Failed to initialise miniaudio resource manager\n");
+            resourceManager.reset();
+            return;
+        }
+    }
+
+    soundEngine = std::make_unique<ma_engine>();
+
+    ma_engine_config config = ma_engine_config_init();
+    config.pResourceManager = resourceManager.get();
+
+    ma_result result = ma_engine_init(&config, soundEngine.get());
+
+    if (result != MA_SUCCESS)
+    {
+        printf("ERROR: Failed to initialise miniaudio engine\n");
+        soundEngine.reset();
+    }
+}
+
 void pl::Sound::deinit()
 {
     if (soundEngine)
     {
         ma_engine_uninit(soundEngine.get());
         soundEngine.reset();
+    }
+
+    if (resourceManager)
+    {
+        ma_resource_manager_uninit(resourceManager.get());
+        resourceManager.reset();
     }
 }
 
@@ -69,4 +103,22 @@ void pl::Sound::stop()
     {
         ma_sound_stop(sound.get());
     }
+}
+
+bool pl::Sound::isPlaying()
+{
+    if (sound)
+    {
+        return ma_sound_is_playing(sound.get());
+    }
+    return false;
+}
+
+bool pl::Sound::isFinished()
+{
+    if (sound)
+    {
+        return ma_sound_at_end(sound.get());
+    }
+    return false;
 }
