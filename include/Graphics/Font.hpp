@@ -12,6 +12,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
 
 #include "Vector.hpp"
 #include "Rect.hpp"
@@ -34,6 +35,8 @@ public:
     bool loadFromFile(const std::string& fontPath);
 
     void draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData);
+
+    pl::Rect<float> measureText(const TextDrawData& drawData);
 
 private:
     bool createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyphChars, uint32_t size, uint32_t outline);

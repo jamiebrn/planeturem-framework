@@ -90,7 +90,37 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
     const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
 
-    Vector2f textPos = drawData.position;
+    // Null if not centring / clamping to area
+    Rect<float> textBounds(0, 0, 0, 0);
+    if (drawData.centeredX || drawData.centeredY || drawData.containOnScreenX || drawData.containOnScreenY)
+    {
+        textBounds = measureText(drawData);
+    }
+
+    Vector2f textStartPos = drawData.position;
+    if (drawData.centeredX)
+    {
+        textBounds.x -= textBounds.width / 2;
+        textStartPos.x = textBounds.x;
+    }
+    if (drawData.centeredY)
+    {
+        textBounds.y -= textBounds.height / 2;
+        textStartPos.y = textBounds.y;
+    }
+
+    if (drawData.containOnScreenX)
+    {
+        textBounds.x = std::clamp(textBounds.x, drawData.containPaddingLeft, renderTarget.getWidth() - drawData.containPaddingRight - textBounds.width);
+        textStartPos.x = textBounds.x;
+    }
+    if (drawData.containOnScreenY)
+    {
+        textBounds.y = std::clamp(textBounds.y, drawData.containPaddingTop, renderTarget.getHeight() - drawData.containPaddingBottom - textBounds.height);
+        textStartPos.y = textBounds.y;
+    }
+
+    Vector2f textPos = textStartPos;
 
     VertexArray outlineFontVertices;
     VertexArray fontVertices;
@@ -150,6 +180,58 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
     fontVertices.draw(renderTarget);
 
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
+{
+    if (drawData.text.empty())
+    {
+        return Rect<float>(drawData.position.x, drawData.position.y, 0, 0);
+    }
+
+    const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
+
+    Vector2f textPos = drawData.position;
+
+    for (char character : drawData.text)
+    {
+        const Character& characterData = characterSet.characterData.at(character);
+
+        if (character == '\n')
+        {
+            textPos.y += drawData.size;
+            textPos.x = drawData.position.x;
+            continue;
+        }
+
+        float xPos = textPos.x + characterData.bearing.x;
+        float yPos = textPos.y + drawData.size - characterData.bearing.y;
+
+        textPos.x += characterData.advance >> 16;
+    }
+
+    Rect<float> bounds;
+    bounds.x = drawData.position.x;
+    bounds.y = drawData.position.y;
+    bounds.width = textPos.x - drawData.position.x;
+    bounds.height = textPos.y + drawData.size - drawData.position.y;
+
+    if (drawData.outlineThickness > 0)
+    {
+        const Character& characterData = characterSet.characterData.at(drawData.text[0]);
+
+        const CharacterSet& outlineCharacterSet = renderedOutlineCharacterSets.at(drawData.size).at(drawData.outlineThickness);
+        const Character& characterOutlineData = outlineCharacterSet.characterData.at(drawData.text[0]);
+
+        int xDiff = characterOutlineData.size.x - characterData.size.x;
+        int yDiff = characterOutlineData.size.y - characterData.size.y;
+        bounds.x -= xDiff / 2;
+        bounds.y -= yDiff / 2;
+        bounds.width += xDiff;
+        bounds.height += yDiff;
+    }
+
+    return bounds;
 }
 
 bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyphChars, uint32_t size, uint32_t outline)

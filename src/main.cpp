@@ -116,6 +116,10 @@ int main(int argc, char* argv[])
         textDrawData.color = pl::Color(1, 1, 1, 1);
         textDrawData.size = 32;
         textDrawData.text = std::to_string(mouseX) + ", " + std::to_string(mouseY);
+        textDrawData.centeredX = true;
+        textDrawData.centeredY = true;
+        textDrawData.containOnScreenX = true;
+        textDrawData.containOnScreenY = true;
 
         font.draw(window, fontShader, textDrawData);
 
