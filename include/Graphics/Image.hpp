@@ -5,6 +5,9 @@
 
 #include <string>
 
+namespace pl
+{
+
 class Image
 {
 public:
@@ -24,3 +27,5 @@ private:
     uint8_t* pixels;
 
 };
+
+}
