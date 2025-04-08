@@ -167,7 +167,7 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        outlineFontVertices.draw(renderTarget);
+        outlineFontVertices.draw(renderTarget, nullptr);
     }
 
     glBindTexture(GL_TEXTURE_2D, characterSet.texture);
@@ -177,7 +177,7 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    fontVertices.draw(renderTarget);
+    fontVertices.draw(renderTarget, nullptr);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
