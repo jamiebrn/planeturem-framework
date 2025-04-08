@@ -133,6 +133,11 @@ void pl::Window::setTitle(const std::string& title)
     SDL_SetWindowTitle(window, title.c_str());
 }
 
+SDL_Window* pl::Window::getSDLWindow()
+{
+    return window;
+}
+
 void pl::Window::bind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -40,6 +40,8 @@ public:
 
     void setTitle(const std::string& title);
 
+    SDL_Window* getSDLWindow();
+
     virtual void bind() override;
 
     virtual int getWidth() override;
