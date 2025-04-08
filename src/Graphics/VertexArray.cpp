@@ -85,6 +85,7 @@ void pl::VertexArray::draw(RenderTarget& renderTarget) const
     {
         vertex.position.x = (vertex.position.x - halfTargetWidth) / halfTargetWidth;
         vertex.position.y = -(vertex.position.y - halfTargetHeight) / halfTargetHeight;
+        vertex.color = vertex.color.normalise();
     }
 
     GLuint glVertexArray;
