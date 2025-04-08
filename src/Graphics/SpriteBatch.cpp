@@ -79,11 +79,10 @@ void pl::SpriteBatch::draw(RenderTarget& window, const DrawData& drawData)
     }
 
     // Set UV coords
-    vertices[0].textureUV = static_cast<Vector2f>(drawData.textureRect.getPosition()) / drawData.texture->getWidth();
-    vertices[1].textureUV = vertices[0].textureUV + Vector2f(drawData.textureRect.width / drawData.texture->getWidth(), 0);
-    vertices[2].textureUV = vertices[0].textureUV + Vector2f(drawData.textureRect.getSize().x / drawData.texture->getWidth(),
-        drawData.textureRect.getSize().y / drawData.texture->getHeight());
-    vertices[3].textureUV = vertices[0].textureUV + Vector2f(0, drawData.textureRect.height / drawData.texture->getHeight());
+    vertices[0].textureUV = static_cast<Vector2f>(drawData.textureRect.getPosition());
+    vertices[1].textureUV = vertices[0].textureUV + Vector2f(drawData.textureRect.width, 0);
+    vertices[2].textureUV = vertices[0].textureUV + Vector2f(drawData.textureRect.width, drawData.textureRect.height);
+    vertices[3].textureUV = vertices[0].textureUV + Vector2f(0, drawData.textureRect.height);
 
     Color colorNormalised = drawData.colour.normalise();
     for (int i = 0; i < 4; i++)
@@ -112,7 +111,7 @@ void pl::SpriteBatch::drawVertexArray(RenderTarget& window)
         return;
     }
 
-    window.draw(vertexArray, *batchShader, *batchTexture, BlendMode::Alpha);
+    window.draw(vertexArray, *batchShader, batchTexture, BlendMode::Alpha);
 }
 
 void pl::SpriteBatch::resetBatchValues()
