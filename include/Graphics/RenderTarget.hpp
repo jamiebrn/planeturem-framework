@@ -15,7 +15,7 @@ class RenderTarget
 public:
     void clear(const Color& color);
 
-    void draw(const VertexArray& vertexArray, const Shader& shader, const Texture& texture, BlendMode blendMode);
+    void draw(const VertexArray& vertexArray, const Shader& shader, const Texture* texture, BlendMode blendMode);
 
     virtual void bind() = 0;
 
