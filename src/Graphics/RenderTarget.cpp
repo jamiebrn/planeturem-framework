@@ -28,6 +28,16 @@ void pl::RenderTarget::draw(const VertexArray& vertexArray, const Shader& shader
             glBlendFunc(GL_ONE, GL_ZERO);
             break;
         }
+        case BlendMode::Add:
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            break;
+        }
+        case BlendMode::Multiply:
+        {
+            glBlendFunc(GL_DST_COLOR, GL_ZERO);
+            break;
+        }
         case BlendMode::Alpha:
         {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
