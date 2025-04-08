@@ -26,6 +26,12 @@ struct Rect
     {
         return Vector2<T>(width, height);
     }
+
+    template <class U>
+    inline operator Rect<U>() const
+    {
+        return Rect<U>(static_cast<U>(x), static_cast<U>(y), static_cast<U>(width), static_cast<U>(height));
+    }
 };
 
 }
