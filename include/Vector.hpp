@@ -64,6 +64,26 @@ struct Vector2
         return Vector2<T>(x / div, y / div);
     }
 
+    inline void operator+=(const Vector2<T>& vector) const
+    {
+        *this = *this + vector;
+    }
+
+    inline void operator-=(const Vector2<T>& vector) const
+    {
+        *this = *this - vector;
+    }
+
+    inline void operator*=(T mult) const
+    {
+        *this = *this * mult;
+    }
+
+    inline void operator/=(T div) const
+    {
+        *this = *this / div;
+    }
+
     template <class U>
     inline operator Vector2<U>() const
     {
