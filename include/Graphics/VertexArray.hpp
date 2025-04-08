@@ -23,6 +23,9 @@ public:
     void appendVertexArray(const VertexArray& vertexArray);
     void clear();
 
+    void reserve(uint32_t size);
+    void resize(uint32_t size);
+
     const std::vector<Vertex>& getVertexData() const;
 
     int size();

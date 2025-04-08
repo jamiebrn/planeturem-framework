@@ -54,6 +54,16 @@ void pl::VertexArray::clear()
     vertices.clear();
 }
 
+void pl::VertexArray::reserve(uint32_t size)
+{
+    vertices.reserve(size);
+}
+
+void pl::VertexArray::resize(uint32_t size)
+{
+    vertices.resize(size);
+}
+
 const std::vector<pl::Vertex>& pl::VertexArray::getVertexData() const
 {
     return vertices;
