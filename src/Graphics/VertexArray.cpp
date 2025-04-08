@@ -69,6 +69,12 @@ const std::vector<pl::Vertex>& pl::VertexArray::getVertexData() const
     return vertices;
 }
 
+pl::Vertex& pl::VertexArray::operator[](uint32_t index)
+{
+    assert(index < vertices.size());
+    return vertices[index];
+}
+
 int pl::VertexArray::size()
 {
     return vertices.size();

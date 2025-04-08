@@ -2,6 +2,7 @@
 
 #include <extlib/gl.h>
 
+#include <assert.h>
 #include <vector>
 
 #include "Graphics/Vertex.hpp"
@@ -27,6 +28,8 @@ public:
     void resize(uint32_t size);
 
     const std::vector<Vertex>& getVertexData() const;
+
+    Vertex& operator[](uint32_t index);
 
     int size();
 
