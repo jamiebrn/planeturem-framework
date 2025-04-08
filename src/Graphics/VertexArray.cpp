@@ -80,7 +80,7 @@ int pl::VertexArray::size()
     return vertices.size();
 }
 
-void pl::VertexArray::draw(RenderTarget& renderTarget) const
+void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture) const
 {
     std::vector<Vertex> transformedVertices = vertices;
 
@@ -91,6 +91,11 @@ void pl::VertexArray::draw(RenderTarget& renderTarget) const
     {
         vertex.position.x = (vertex.position.x - halfTargetWidth) / halfTargetWidth;
         vertex.position.y = -(vertex.position.y - halfTargetHeight) / halfTargetHeight;
+        if (texture)
+        {
+            vertex.textureUV.x /= texture->getWidth();
+            vertex.textureUV.y /= texture->getHeight();
+        }
         vertex.color = vertex.color.normalise();
     }
 

@@ -6,8 +6,9 @@
 #include <vector>
 
 #include "Graphics/Vertex.hpp"
-#include "Rect.hpp"
 #include "Graphics/RenderTarget.hpp"
+#include "Graphics/Texture.hpp"
+#include "Rect.hpp"
 
 namespace pl
 {
@@ -33,7 +34,7 @@ public:
 
     int size();
 
-    void draw(RenderTarget& renderTarget) const;
+    void draw(RenderTarget& renderTarget, const Texture* texture) const;
 
 private:
     std::vector<Vertex> vertices;

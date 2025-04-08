@@ -45,5 +45,5 @@ void pl::RenderTarget::draw(const VertexArray& vertexArray, const Shader& shader
         }
     }
 
-    vertexArray.draw(*this);
+    vertexArray.draw(*this, texture);
 }
