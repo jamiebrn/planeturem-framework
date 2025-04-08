@@ -26,6 +26,9 @@ public:
     bool isPlaying();
     bool isFinished();
 
+    void setVolume(float volume);
+    float getVolume();
+
 private:
     void initEngine();
 

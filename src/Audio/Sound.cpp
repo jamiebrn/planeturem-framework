@@ -122,3 +122,20 @@ bool pl::Sound::isFinished()
     }
     return false;
 }
+
+void pl::Sound::setVolume(float volume)
+{
+    if (sound)
+    {
+        ma_sound_set_volume(sound.get(), volume);
+    }
+}
+
+float pl::Sound::getVolume()
+{
+    if (sound)
+    {
+        return ma_sound_get_volume(sound.get());
+    }
+    return 0.0f;
+}
