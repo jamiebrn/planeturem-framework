@@ -96,6 +96,12 @@ struct Vector2
     }
 };
 
+template <class T>
+inline Vector2<T> operator*(T mult, const Vector2<T>& vector)
+{
+    return vector * mult;
+}
+
 typedef Vector2<float> Vector2f;
 
 template <class T>
