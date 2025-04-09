@@ -46,13 +46,23 @@ bool pl::Font::loadFromFile(const std::string& fontPath)
             return false;
         }
     }
+
+    if (fontFace)
+    {
+        FT_Done_Face(fontFace);
+    }
     
     if (FT_New_Face(freetype, fontPath.c_str(), 0, &fontFace))
     {
         printf(("ERROR: Failed to load font " + fontPath + "\n").c_str());
         return false;
     }
-    
+
+    if (fontStroker)
+    {
+        FT_Stroker_Done(fontStroker);
+    }
+
     if (FT_Stroker_New(freetype, &fontStroker))
     {
         printf(("ERROR: Failed to load font stroker " + fontPath + "\n").c_str());
