@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <Graphics/Color.hpp>
+
 namespace pl
 {
 
@@ -19,6 +21,8 @@ public:
     int getHeight() const;
     int getByteSize() const;
     uint8_t* getPixelPtr() const;
+
+    pl::Color getPixel(int x, int y) const;
 
 private:
     int width;

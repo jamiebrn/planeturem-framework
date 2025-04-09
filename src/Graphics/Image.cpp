@@ -1,7 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "Graphics/Image.hpp"
 
-Image::Image()
+pl::Image::Image()
 {
     width = 0;
     height = 0;
@@ -9,7 +9,7 @@ Image::Image()
     pixels = nullptr;
 }
 
-Image::~Image()
+pl::Image::~Image()
 {
     if (pixels)
     {
@@ -17,28 +17,35 @@ Image::~Image()
     }
 }
 
-bool Image::loadFromFile(const std::string& filePath)
+bool pl::Image::loadFromFile(const std::string& filePath)
 {
     pixels = stbi_load(filePath.c_str(), &width, &height, &channels, STBI_rgb_alpha);
     return (pixels != nullptr);
 }
 
-int Image::getWidth() const
+int pl::Image::getWidth() const
 {
     return width;
 }
 
-int Image::getHeight() const
+int pl::Image::getHeight() const
 {
     return height;
 }
 
-int Image::getByteSize() const
+int pl::Image::getByteSize() const
 {
     return width * height * 4;
 }
 
-uint8_t* Image::getPixelPtr() const
+uint8_t* pl::Image::getPixelPtr() const
 {
     return pixels;
+}
+
+pl::Color pl::Image::getPixel(int x, int y) const
+{
+    uint8_t* pixelPtr = &pixels[(y * width + x) * 4];
+    pl::Color color(*pixelPtr, *(pixelPtr + 1), *(pixelPtr + 2), *(pixelPtr + 3));
+    return color;
 }
