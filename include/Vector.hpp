@@ -84,6 +84,11 @@ struct Vector2
         *this = *this / div;
     }
 
+    inline bool operator==(const Vector2<T>& vector) const
+    {
+        return (x == vector.x && y == vector.y);
+    }
+
     template <class U>
     inline operator Vector2<U>() const
     {

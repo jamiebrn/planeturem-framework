@@ -16,6 +16,11 @@ struct Color
     {
         return Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
     }
+    
+    inline bool operator==(const Color& color) const
+    {
+        return (r == color.r && g == color.g && b == color.b && a == color.a);
+    }
 };
 
 }
