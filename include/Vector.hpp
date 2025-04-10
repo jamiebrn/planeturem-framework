@@ -54,6 +54,16 @@ struct Vector2
         return Vector2<T>(x - vector.x, y - vector.y);
     }
 
+    inline Vector2<T> operator+() const
+    {
+        return *this;
+    }
+
+    inline Vector2<T> operator-() const
+    {
+        return Vector2<T>(-x, -y);
+    }
+
     inline Vector2<T> operator*(T mult) const
     {
         return Vector2<T>(x * mult, y * mult);
