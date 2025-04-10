@@ -17,7 +17,7 @@ struct DrawData
     Vector2f position;
     float rotation = 0.0f;
     Vector2f scale;
-    Vector2f centerRatio = Vector2f(0, 0);
+    Vector2f centerRatio;
     Color color = Color(255, 255, 255);
     Rect<int> textureRect;
 
