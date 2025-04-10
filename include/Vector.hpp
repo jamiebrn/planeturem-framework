@@ -121,7 +121,7 @@ struct Vector3
     T y;
     T z;
 
-    Vector3() : x(0), y(0), z(0);
+    Vector3() : x(0), y(0), z(0) {}
     Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
 };
 
@@ -133,7 +133,7 @@ struct Vector4
     T z;
     T w;
 
-    Vector4() : x(0), y(0), z(0), w(0);
+    Vector4() : x(0), y(0), z(0), w(0) {}
     Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 };
 
