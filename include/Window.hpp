@@ -31,7 +31,11 @@ public:
     bool isOpen();
     void close();
 
+    void setWindowSize(int width, int height);
+
+    bool getIsFullscreen() const;
     void toggleFullscreen();
+
     void setVSync(bool enabled);
 
     int pollEvent(SDL_Event& event);

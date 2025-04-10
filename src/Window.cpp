@@ -54,6 +54,16 @@ void pl::Window::create(const std::string& title, int width, int height, uint32_
     running = true;
 }
 
+void pl::Window::setWindowSize(int width, int height)
+{
+    SDL_SetWindowSize(window, width, height);
+}
+
+bool pl::Window::getIsFullscreen() const
+{
+    return (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
 void pl::Window::toggleFullscreen()
 {
     uint32_t windowFlags = (SDL_GetWindowFlags(window) ^ SDL_WINDOW_FULLSCREEN_DESKTOP);
