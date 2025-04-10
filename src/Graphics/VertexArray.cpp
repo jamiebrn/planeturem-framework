@@ -2,26 +2,7 @@
 
 pl::VertexArray::VertexArray()
 {
-    // glGenVertexArrays(1, &glVertexArray);
-    // glGenBuffers(1, &glVertexBuffer);
-
-    // glBindVertexArray(glVertexArray);
-    // glBindBuffer(GL_ARRAY_BUFFER, glVertexBuffer);
-
-    // glVertexAttribPointer(0, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), 0);
-    // glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f)));
-    // glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f) + sizeof(Color)));
-    // glEnableVertexAttribArray(0);
-    // glEnableVertexAttribArray(1);
-    // glEnableVertexAttribArray(2);
-
-    // glBindVertexArray(0);
-}
-
-pl::VertexArray::~VertexArray()
-{
-    // glDeleteVertexArrays(1, &glVertexArray);
-    // glDeleteBuffers(1, &glVertexBuffer);
+    primitiveMode = GL_TRIANGLES;
 }
 
 void pl::VertexArray::addVertex(const Vertex& vertex)
@@ -52,6 +33,28 @@ void pl::VertexArray::appendVertexArray(const VertexArray& vertexArray)
 void pl::VertexArray::clear()
 {
     vertices.clear();
+}
+
+void pl::VertexArray::setPrimitiveMode(PrimitiveMode primitiveMode)
+{
+    switch (primitiveMode)
+    {
+        case PrimitiveMode::Triangles:
+        {
+            this->primitiveMode = GL_TRIANGLES;
+            break;
+        }
+        case PrimitiveMode::Points:
+        {
+            this->primitiveMode = GL_POINTS;
+            break;
+        }
+        case PrimitiveMode::Lines:
+        {
+            this->primitiveMode = GL_LINES;
+            break;
+        }
+    }
 }
 
 void pl::VertexArray::reserve(uint32_t size)
@@ -120,7 +123,7 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture) c
     
     glBindVertexArray(glVertexArray);
     
-    glDrawArrays(GL_TRIANGLES, 0, transformedVertices.size());
+    glDrawArrays(primitiveMode, 0, transformedVertices.size());
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
