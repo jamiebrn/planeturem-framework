@@ -11,8 +11,8 @@ namespace pl
 
 struct DrawData
 {
-    const Shader* shader = nullptr;
-    const Texture* texture = nullptr;
+    Shader* shader = nullptr;
+    Texture* texture = nullptr;
     
     Vector2f position;
     float rotation = 0.0f;
