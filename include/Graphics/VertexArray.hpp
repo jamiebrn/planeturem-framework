@@ -18,6 +18,7 @@ class VertexArray
 {
 public:
     VertexArray();
+    ~VertexArray();
 
     void addVertex(const Vertex& vertex);
     void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV);

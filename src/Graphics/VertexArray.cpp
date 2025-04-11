@@ -8,6 +8,19 @@ pl::VertexArray::VertexArray()
     vertexBuffer = 0;
 }
 
+pl::VertexArray::~VertexArray()
+{
+    if (vertexBuffer != 0)
+    {
+        glDeleteBuffers(1, &vertexBuffer);
+    }
+
+    if (vertexArray != 0)
+    {
+        glDeleteVertexArrays(1, &vertexArray);
+    }
+}
+
 void pl::VertexArray::addVertex(const Vertex& vertex)
 {
     vertices.push_back(vertex);
@@ -131,6 +144,6 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
     
     glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(primitiveMode, 0, transformedVertices.size());
-    
+
     glBindVertexArray(0);
 }
