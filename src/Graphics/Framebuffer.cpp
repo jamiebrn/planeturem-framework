@@ -12,6 +12,10 @@ bool pl::Framebuffer::create(uint32_t width, uint32_t height)
 {
     if (framebuffer > 0)
     {
+        if (getWidth() == width && getHeight() == height)
+        {
+            return;
+        }
         glDeleteFramebuffers(1, &framebuffer);
     }
 
