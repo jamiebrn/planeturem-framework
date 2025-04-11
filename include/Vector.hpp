@@ -86,13 +86,13 @@ struct Vector2
         return *this;
     }
 
-    inline Vector2<T>& operator*=(T mult) const
+    inline Vector2<T>& operator*=(T mult)
     {
         *this = *this * mult;
         return *this;
     }
 
-    inline Vector2<T>& operator/=(T div) const
+    inline Vector2<T>& operator/=(T div)
     {
         *this = *this / div;
         return *this;
