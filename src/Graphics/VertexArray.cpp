@@ -136,6 +136,4 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
-
-    glFlush();
 }
