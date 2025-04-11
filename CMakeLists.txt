@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(PlaneturemFramework LANGUAGES CXX C)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-# option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
-
-# set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-
 include(FetchContent)
 FetchContent_Declare(
     SDL2
@@ -16,25 +11,6 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(SDL2)
 
-# FetchContent_Declare(
-#     SDL2_image
-#     GIT_REPOSITORY https://github.com/libsdl-org/SDL_image.git
-#     GIT_TAG release-2.8.4
-#     GIT_SHALLOW TRUE
-#     GIT_PROGRESS TRUE
-# )
-# FetchContent_MakeAvailable(SDL2_image)
-
-# FetchContent_Declare(
-#     SDL2_ttf
-#     GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
-#     GIT_TAG release-2.22.0
-#     GIT_SHALLOW TRUE
-#     GIT_PROGRESS TRUE
-# )
-# FetchContent_MakeAvailable(SDL2_ttf)
-
-# find_package(Freetype REQUIRED)
 FetchContent_Declare(
     freetype
     GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype
@@ -60,15 +36,15 @@ set(OGG_LIBRARY ogg)
 
 FetchContent_MakeAvailable(vorbis)
 
-include_directories(include/)
-include_directories(${freetype_SOURCE_DIR}/include)
-include_directories(${ogg_SOURCE_DIR}/include)
-include_directories(${vorbis_SOURCE_DIR}/include)
-
 file(GLOB_RECURSE CPP_SRC_FILES src/*.cpp src/*.c)
 
-add_executable(PlaneturemFramework ${CPP_SRC_FILES})
+add_library(PlaneturemFramework ${CPP_SRC_FILES})
+
+target_include_directories(PlaneturemFramework PRIVATE include/)
+target_include_directories(PlaneturemFramework PRIVATE ${freetype_SOURCE_DIR}/include)
+target_include_directories(PlaneturemFramework PRIVATE ${ogg_SOURCE_DIR}/include)
+target_include_directories(PlaneturemFramework PRIVATE ${vorbis_SOURCE_DIR}/include)
+
 target_link_libraries(PlaneturemFramework PRIVATE SDL2::SDL2)
 target_link_libraries(PlaneturemFramework PRIVATE vorbis vorbisfile)
 target_link_libraries(PlaneturemFramework PRIVATE freetype)
-target_compile_features(PlaneturemFramework PRIVATE cxx_std_20)
