@@ -48,3 +48,4 @@ target_include_directories(PlaneturemFramework PRIVATE ${vorbis_SOURCE_DIR}/incl
 target_link_libraries(PlaneturemFramework PRIVATE SDL2::SDL2)
 target_link_libraries(PlaneturemFramework PRIVATE vorbis vorbisfile)
 target_link_libraries(PlaneturemFramework PRIVATE freetype)
+target_compile_features(PlaneturemFramework PRIVATE cxx_std_20)
