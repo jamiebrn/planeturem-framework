@@ -40,7 +40,7 @@ file(GLOB_RECURSE CPP_SRC_FILES src/*.cpp src/*.c)
 
 add_library(PlaneturemFramework ${CPP_SRC_FILES})
 
-target_include_directories(PlaneturemFramework PRIVATE include/)
+target_include_directories(PlaneturemFramework PUBLIC include/)
 target_include_directories(PlaneturemFramework PRIVATE ${freetype_SOURCE_DIR}/include)
 target_include_directories(PlaneturemFramework PRIVATE ${ogg_SOURCE_DIR}/include)
 target_include_directories(PlaneturemFramework PRIVATE ${vorbis_SOURCE_DIR}/include)
