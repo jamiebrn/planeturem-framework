@@ -1,11 +1,11 @@
 #include "Graphics/VertexArray.hpp"
 
-GLuint pl::VertexArray::vertexArray = 0;
-GLuint pl::VertexArray::vertexBuffer = 0;
-
 pl::VertexArray::VertexArray()
 {
     primitiveMode = GL_TRIANGLES;
+
+    vertexArray = 0;
+    vertexBuffer = 0;
 }
 
 void pl::VertexArray::addVertex(const Vertex& vertex)
@@ -100,8 +100,6 @@ void pl::VertexArray::initBuffers()
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 }
 
 void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
@@ -132,8 +130,6 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
     
     glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(primitiveMode, 0, transformedVertices.size());
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
 }

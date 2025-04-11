@@ -45,7 +45,7 @@ private:
 
     uint32_t primitiveMode;
 
-    static GLuint vertexArray, vertexBuffer;
+    GLuint vertexArray, vertexBuffer;
 
 };
 

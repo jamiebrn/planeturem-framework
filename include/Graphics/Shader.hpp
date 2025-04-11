@@ -87,8 +87,6 @@ private:
     std::unordered_map<std::string, int> uniformLocations;
     std::unordered_map<int, const Texture*> textureBindings;
 
-    static GLuint boundShaderProgram;
-
 };
 
 }
