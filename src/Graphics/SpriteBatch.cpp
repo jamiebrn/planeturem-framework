@@ -84,10 +84,9 @@ void pl::SpriteBatch::draw(RenderTarget& window, const DrawData& drawData)
     vertices[2].textureUV = vertices[0].textureUV + Vector2f(drawData.textureRect.width, drawData.textureRect.height);
     vertices[3].textureUV = vertices[0].textureUV + Vector2f(0, drawData.textureRect.height);
 
-    Color colorNormalised = drawData.color.normalise();
     for (int i = 0; i < 4; i++)
     {
-        vertices[i].color = colorNormalised;
+        vertices[i].color = drawData.color;
     }
     
     vertexArray.addVertex(vertices[0]);
