@@ -1,5 +1,8 @@
 #include "Graphics/VertexArray.hpp"
 
+GLuint pl::VertexArray::vertexArray = 0;
+GLuint pl::VertexArray::vertexBuffer = 0;
+
 pl::VertexArray::VertexArray()
 {
     primitiveMode = GL_TRIANGLES;
