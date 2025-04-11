@@ -127,9 +127,10 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
     }
     
     glBindVertexArray(vertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
     glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(primitiveMode, 0, transformedVertices.size());
-
+    
     glBindVertexArray(0);
 }
