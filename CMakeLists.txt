@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(PlaneturemFramework LANGUAGES CXX C)
 
+set(BUILD_TESTING FALSE)
+
 include(FetchContent)
 FetchContent_Declare(
     SDL2
