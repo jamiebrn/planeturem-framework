@@ -11,7 +11,7 @@ void pl::RenderTarget::clear(const Color& color)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void pl::RenderTarget::draw(const VertexArray& vertexArray, const Shader& shader, const Texture* texture, BlendMode blendMode)
+void pl::RenderTarget::draw(VertexArray& vertexArray, const Shader& shader, const Texture* texture, BlendMode blendMode)
 {
     bind();
     shader.bind();
