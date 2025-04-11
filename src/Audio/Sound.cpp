@@ -9,6 +9,8 @@ pl::Sound::Sound()
     {
         initEngine();
     }
+
+    sound = nullptr;
 }
 
 pl::Sound::~Sound()
