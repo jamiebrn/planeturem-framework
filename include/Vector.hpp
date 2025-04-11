@@ -74,24 +74,28 @@ struct Vector2
         return Vector2<T>(x / div, y / div);
     }
 
-    inline void operator+=(const Vector2<T>& vector) const
+    inline Vector2<T>& operator+=(const Vector2<T>& vector)
     {
         *this = *this + vector;
+        return *this;
     }
 
-    inline void operator-=(const Vector2<T>& vector) const
+    inline Vector2<T>& operator-=(const Vector2<T>& vector)
     {
         *this = *this - vector;
+        return *this;
     }
 
-    inline void operator*=(T mult) const
+    inline Vector2<T>& operator*=(T mult) const
     {
         *this = *this * mult;
+        return *this;
     }
 
-    inline void operator/=(T div) const
+    inline Vector2<T>& operator/=(T div) const
     {
         *this = *this / div;
+        return *this;
     }
 
     inline bool operator==(const Vector2<T>& vector) const
