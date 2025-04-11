@@ -3,6 +3,22 @@
 pl::VertexArray::VertexArray()
 {
     primitiveMode = GL_TRIANGLES;
+
+    vertexArray = 0;
+    vertexBuffer = 0;
+}
+
+pl::VertexArray::~VertexArray()
+{
+    if (vertexBuffer != 0)
+    {
+        glDeleteBuffers(1, &vertexBuffer);
+    }
+
+    if (vertexArray != 0)
+    {
+        glDeleteVertexArrays(1, &vertexArray);
+    }
 }
 
 void pl::VertexArray::addVertex(const Vertex& vertex)
@@ -83,13 +99,31 @@ int pl::VertexArray::size()
     return vertices.size();
 }
 
-void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture) const
+void pl::VertexArray::initBuffers()
+{
+    glGenVertexArrays(1, &vertexArray);
+    glGenBuffers(1, &vertexBuffer);
+
+    glBindVertexArray(vertexArray);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), 0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f)));
+    glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f) + sizeof(Color)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+}
+
+void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
 {
     std::vector<Vertex> transformedVertices = vertices;
-
+    
     float halfTargetWidth = renderTarget.getWidth() / 2.0f;
     float halfTargetHeight = renderTarget.getHeight() / 2.0f;
-
+    
     for (Vertex& vertex : transformedVertices)
     {
         vertex.position.x = (vertex.position.x - halfTargetWidth) / halfTargetWidth;
@@ -101,34 +135,18 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture) c
         }
         vertex.color = vertex.color.normalise();
     }
-
-    GLuint glVertexArray;
-    GLuint glVertexBuffer;
-
-    glGenVertexArrays(1, &glVertexArray);
-    glGenBuffers(1, &glVertexBuffer);
-
-    glBindVertexArray(glVertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, glVertexBuffer);
-
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f)));
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f) + sizeof(Color)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ARRAY_BUFFER, glVertexBuffer);
+    
+    if (vertexArray == 0 || vertexBuffer == 0)
+    {
+        initBuffers();
+    }
+    
+    glBindVertexArray(vertexArray);
+    
     glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
-    
-    glBindVertexArray(glVertexArray);
-    
     glDrawArrays(primitiveMode, 0, transformedVertices.size());
     
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
-
-    glDeleteVertexArrays(1, &glVertexArray);
-    glDeleteBuffers(1, &glVertexBuffer);
 }

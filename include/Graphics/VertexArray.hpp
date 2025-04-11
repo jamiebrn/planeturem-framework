@@ -18,6 +18,7 @@ class VertexArray
 {
 public:
     VertexArray();
+    ~VertexArray();
 
     void addVertex(const Vertex& vertex);
     void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV);
@@ -36,12 +37,16 @@ public:
 
     int size();
 
-    void draw(RenderTarget& renderTarget, const Texture* texture) const;
+    void draw(RenderTarget& renderTarget, const Texture* texture);
 
 private:
+    void initBuffers();
+
     std::vector<Vertex> vertices;
 
     uint32_t primitiveMode;
+
+    GLuint vertexArray, vertexBuffer;
 
 };
 
