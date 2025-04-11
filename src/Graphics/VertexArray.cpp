@@ -6,22 +6,6 @@ GLuint pl::VertexArray::vertexBuffer = 0;
 pl::VertexArray::VertexArray()
 {
     primitiveMode = GL_TRIANGLES;
-
-    vertexArray = 0;
-    vertexBuffer = 0;
-}
-
-pl::VertexArray::~VertexArray()
-{
-    if (vertexBuffer != 0)
-    {
-        glDeleteBuffers(1, &vertexBuffer);
-    }
-
-    if (vertexArray != 0)
-    {
-        glDeleteVertexArrays(1, &vertexArray);
-    }
 }
 
 void pl::VertexArray::addVertex(const Vertex& vertex)
