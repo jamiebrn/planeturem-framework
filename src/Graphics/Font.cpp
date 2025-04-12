@@ -75,24 +75,9 @@ bool pl::Font::loadFromFile(const std::string& fontPath)
 
 void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData)
 {
-    std::unordered_set<uint8_t> glyphChars;
-    for (uint8_t character : drawData.text)
+    if (!createRequiredGlyphs(drawData))
     {
-        glyphChars.insert(character);
-    }
-
-    if (!createCharacterSetGlyphs(glyphChars, drawData.size, 0))
-    {
-        printf("ERROR: Failed to create character set of size %d, outline 0\n", drawData.size);
         return;
-    }
-    if (drawData.outlineThickness > 0)
-    {
-        if (!createCharacterSetGlyphs(glyphChars, drawData.size, drawData.outlineThickness))
-        {
-            printf("ERROR: Failed to create character set of size %d, outline %d\n", drawData.size, drawData.outlineThickness);
-            return;
-        }
     }
 
     renderTarget.bind();
@@ -199,6 +184,11 @@ pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
         return Rect<float>(drawData.position.x, drawData.position.y, 0, 0);
     }
 
+    if (!createRequiredGlyphs(drawData))
+    {
+        return Rect<float>(drawData.position.x, drawData.position.y, 0, 0);
+    }
+
     const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
 
     Vector2f textPos = drawData.position;
@@ -242,6 +232,32 @@ pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
     }
 
     return bounds;
+}
+
+bool pl::Font::createRequiredGlyphs(const TextDrawData& drawData)
+{
+    std::unordered_set<uint8_t> glyphChars;
+    for (uint8_t character : drawData.text)
+    {
+        glyphChars.insert(character);
+    }
+
+    if (!createCharacterSetGlyphs(glyphChars, drawData.size, 0))
+    {
+        printf("ERROR: Failed to create character set of size %d, outline 0\n", drawData.size);
+        return false;
+    }
+
+    if (drawData.outlineThickness > 0)
+    {
+        if (!createCharacterSetGlyphs(glyphChars, drawData.size, drawData.outlineThickness))
+        {
+            printf("ERROR: Failed to create character set of size %d, outline %d\n", drawData.size, drawData.outlineThickness);
+            return false;
+        }
+    }
+
+    return true;
 }
 
 bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyphChars, uint32_t size, uint32_t outline)

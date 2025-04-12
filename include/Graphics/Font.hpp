@@ -39,6 +39,7 @@ public:
     pl::Rect<float> measureText(const TextDrawData& drawData);
 
 private:
+    bool createRequiredGlyphs(const TextDrawData& drawData);
     bool createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyphChars, uint32_t size, uint32_t outline);
 
     static inline const int CHAR_COUNT = 128;
