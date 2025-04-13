@@ -35,7 +35,7 @@ private:
     VertexArray vertexArray;
 
     const Texture* batchTexture;
-    const Shader* batchShader;
+    Shader* batchShader;
 
 };
 
