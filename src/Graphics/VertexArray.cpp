@@ -1,27 +1,16 @@
 #include "Graphics/VertexArray.hpp"
 
 GLuint pl::VertexArray::vertexArray = 0;
-GLuint pl::VertexArray::vertexBuffer = 0;
+std::array<GLuint, pl::VertexArray::VERTEX_BUFFER_COUNT> pl::VertexArray::vertexBuffers;
+int pl::VertexArray::vertexBufferIndex;
 
 pl::VertexArray::VertexArray()
 {
     primitiveMode = GL_TRIANGLES;
-
-    // vertexArray = 0;
-    // vertexBuffer = 0;
 }
 
 pl::VertexArray::~VertexArray()
 {
-    // if (vertexBuffer != 0)
-    // {
-    //     glDeleteBuffers(1, &vertexBuffer);
-    // }
-
-    // if (vertexArray != 0)
-    // {
-    //     glDeleteVertexArrays(1, &vertexArray);
-    // }
 }
 
 void pl::VertexArray::addVertex(const Vertex& vertex)
@@ -105,43 +94,34 @@ int pl::VertexArray::size()
 void pl::VertexArray::initBuffers()
 {
     glGenVertexArrays(1, &vertexArray);
-    glGenBuffers(1, &vertexBuffer);
 
     glBindVertexArray(vertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-
+    
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), 0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f)));
     glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f) + sizeof(Color)));
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
+
+    for (int i = 0; i < vertexBuffers.size(); i++)
+    {
+        glGenBuffers(GL_ARRAY_BUFFER, &vertexBuffers[i]);
+    }
 }
 
 void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
 {
-    // std::vector<Vertex> transformedVertices = vertices;
-    
-    // for (Vertex& vertex : transformedVertices)
-    // {
-    //     vertex.position.x = (vertex.position.x - halfTargetWidth) / halfTargetWidth;
-    //     vertex.position.y = -(vertex.position.y - halfTargetHeight) / halfTargetHeight;
-    //     if (texture)
-    //     {
-    //         vertex.textureUV.x /= texture->getWidth();
-    //         vertex.textureUV.y /= texture->getHeight();
-    //     }
-    //     vertex.color = vertex.color.normalise();
-    // }
-    
-    if (vertexArray == 0 || vertexBuffer == 0)
+    if (vertexArray == 0)
     {
         initBuffers();
     }
     
     glBindVertexArray(vertexArray);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[vertexBufferIndex]);
     
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(primitiveMode, 0, vertices.size());
+
+    vertexBufferIndex = (vertexBufferIndex + 1) % vertexBuffers.size();
 }
