@@ -136,7 +136,7 @@ void pl::Shader::use() const
 
     if (usedShader != shaderProgram)
     {
-        use();
+        glUseProgram(shaderProgram);
         usedShader = shaderProgram;
     }
 }
