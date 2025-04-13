@@ -110,7 +110,7 @@ void pl::VertexArray::initBuffers()
     }
 }
 
-void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
+void pl::VertexArray::draw(RenderTarget& renderTarget)
 {
     if (vertexArrays[0] == 0)
     {

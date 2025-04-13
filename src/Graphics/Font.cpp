@@ -21,19 +21,6 @@ pl::Font::~Font()
 
     FT_Done_Face(fontFace);
     FT_Stroker_Done(fontStroker);
-
-    for (auto& characterSet : renderedCharacterSets)
-    {
-        glDeleteTextures(1, &characterSet.second.texture);
-    }
-
-    for (auto& outlineCharacterSets : renderedOutlineCharacterSets)
-    {
-        for (auto& outlineCharacterSet : outlineCharacterSets.second)
-        {
-            glDeleteTextures(1, &outlineCharacterSet.second.texture);
-        }
-    }
 }
 
 bool pl::Font::loadFromFile(const std::string& fontPath)
@@ -141,13 +128,13 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
             outlineFontVertices.addQuad(Rect<float>(xPos - (characterOutlineData.size.x - characterData.size.x) / 2,
                                                     yPos - (characterOutlineData.size.y - characterData.size.y) / 2,
                         characterOutlineData.size.x, characterOutlineData.size.y), drawData.outlineColor,
-            Rect<float>(characterOutlineData.textureUV.x / TEXTURE_WIDTH, characterOutlineData.textureUV.y / outlineCharacterSet.textureHeight,
-                        characterOutlineData.textureUV.width / TEXTURE_WIDTH, characterOutlineData.textureUV.height / outlineCharacterSet.textureHeight));
+            Rect<float>(characterOutlineData.textureUV.x / TEXTURE_WIDTH, characterOutlineData.textureUV.y / outlineCharacterSet.texture.getHeight(),
+                        characterOutlineData.textureUV.width / TEXTURE_WIDTH, characterOutlineData.textureUV.height / outlineCharacterSet.texture.getHeight()));
         }
 
         fontVertices.addQuad(Rect<float>(xPos, yPos, characterData.size.x, characterData.size.y), drawData.color,
-            Rect<float>(characterData.textureUV.x / TEXTURE_WIDTH, characterData.textureUV.y / characterSet.textureHeight,
-                        characterData.textureUV.width / TEXTURE_WIDTH, characterData.textureUV.height / characterSet.textureHeight));
+            Rect<float>(characterData.textureUV.x / TEXTURE_WIDTH, characterData.textureUV.y / characterSet.texture.getHeight(),
+                        characterData.textureUV.width / TEXTURE_WIDTH, characterData.textureUV.height / characterSet.texture.getHeight()));
 
         textPos.x += characterData.advance >> 16;
     }
@@ -155,26 +142,11 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
     if (outlineFontVertices.size() > 0)
     {
         const CharacterSet& outlineCharacterSet = renderedOutlineCharacterSets.at(drawData.size).at(drawData.outlineThickness);
-        glBindTexture(GL_TEXTURE_2D, outlineCharacterSet.texture);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, drawData.smoothing ? GL_LINEAR : GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, drawData.smoothing ? GL_LINEAR : GL_NEAREST);
-
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        outlineFontVertices.draw(renderTarget, nullptr);
+    
+        renderTarget.draw(outlineFontVertices, shader, &outlineCharacterSet.texture, pl::BlendMode::Alpha);
     }
 
-    glBindTexture(GL_TEXTURE_2D, characterSet.texture);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, drawData.smoothing ? GL_LINEAR : GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, drawData.smoothing ? GL_LINEAR : GL_NEAREST);
-
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    fontVertices.draw(renderTarget, nullptr);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
+    renderTarget.draw(fontVertices, shader, &characterSet.texture, pl::BlendMode::Alpha);
 }
 
 pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
@@ -283,6 +255,8 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
         loadFlags |= FT_LOAD_NO_BITMAP;
     }
 
+    int characterSetHeight = characterSet->texture.getHeight();
+
     bool rendered = false;
     
     for (uint8_t glyphChar : glyphChars)
@@ -329,7 +303,7 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
             if (rowIdx >= characterSet->renderedGlyphsBitmap.size())
             {
                 characterSet->renderedGlyphsBitmap.resize(characterSet->renderedGlyphsBitmap.size() + TEXTURE_WIDTH * charSize);
-                characterSet->textureHeight += charSize;
+                characterSetHeight += charSize;
             }
 
             uint8_t* glyphRow = &characterSet->renderedGlyphsBitmap[rowIdx];
@@ -352,17 +326,20 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
 
     if (rendered)
     {
-        glGenTextures(1, &characterSet->texture);
-        glBindTexture(GL_TEXTURE_2D, characterSet->texture);
+        GLuint newCharacterSetTexture;
+        glGenTextures(1, &newCharacterSetTexture);
+        glBindTexture(GL_TEXTURE_2D, newCharacterSetTexture);
     
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, TEXTURE_WIDTH, characterSet->textureHeight, 0, GL_RED, GL_UNSIGNED_BYTE, characterSet->renderedGlyphsBitmap.data());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, TEXTURE_WIDTH, characterSetHeight, 0, GL_RED, GL_UNSIGNED_BYTE, characterSet->renderedGlyphsBitmap.data());
     
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     
         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+        characterSet->texture.setFromAllocated(newCharacterSetTexture, TEXTURE_WIDTH, characterSetHeight);
     }
 
     return true;

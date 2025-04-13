@@ -18,6 +18,7 @@
 #include "Rect.hpp"
 #include "Graphics/RenderTarget.hpp"
 #include "Graphics/Shader.hpp"
+#include "Graphics/Texture.hpp"
 #include "VertexArray.hpp"
 #include "TextDrawData.hpp"
 
@@ -67,9 +68,11 @@ private:
         std::unordered_set<uint8_t> renderedGlyphs;
         uint32_t textureRenderIdxX = 0;
         uint32_t textureRenderIdxY = 0;
+
+        Texture texture;
         
-        GLuint texture;
-        uint32_t textureHeight = 0;
+        // GLuint texture;
+        // uint32_t textureHeight = 0;
     };
 
     std::unordered_map<uint32_t, CharacterSet> renderedCharacterSets;

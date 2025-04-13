@@ -38,7 +38,8 @@ public:
 
     int size();
 
-    void draw(RenderTarget& renderTarget, const Texture* texture);
+    // Always call RenderTarget::draw() for correct bindings
+    void draw(RenderTarget& renderTarget);
 
 private:
     void initBuffers();
@@ -48,7 +49,7 @@ private:
     uint32_t primitiveMode;
 
     static constexpr int VERTEX_BUFFER_COUNT = 3;
-    
+
     static std::array<GLuint, VERTEX_BUFFER_COUNT> vertexArrays;
     static std::array<GLuint, VERTEX_BUFFER_COUNT> vertexBuffers;
     static int vertexBufferIndex;

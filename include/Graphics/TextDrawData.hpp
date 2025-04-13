@@ -21,8 +21,6 @@ struct TextDrawData
     bool centeredX = false;
     bool centeredY = false;
 
-    bool smoothing = false;
-
     bool containOnScreenX = false;
     bool containOnScreenY = false;
     float containPaddingLeft = 0;
