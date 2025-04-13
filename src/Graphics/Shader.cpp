@@ -1,10 +1,23 @@
 #include "Graphics/Shader.hpp"
 
+GLuint pl::Shader::boundShader = 0;
+GLuint pl::Shader::usedShader = 0;
+
 pl::Shader::~Shader()
 {
     if (shaderProgram == 0)
     {
         return;
+    }
+
+    if (boundShader == shaderProgram)
+    {
+        boundShader = 0;
+    }
+
+    if (usedShader == shaderProgram)
+    {
+        usedShader = 0;
     }
 
     glDeleteProgram(shaderProgram);
@@ -95,7 +108,15 @@ void pl::Shader::bind() const
     {
         return;
     }
-    glUseProgram(shaderProgram);
+
+    if (boundShader == shaderProgram)
+    {
+        return;
+    }
+
+    boundShader = shaderProgram;
+
+    use();
 
     int textureIdx = 1;
     for (auto iter = textureBindings.begin(); iter != textureBindings.end(); iter++)
@@ -104,8 +125,20 @@ void pl::Shader::bind() const
         iter->second->use(textureIdx);
         textureIdx++;
     }
+}
 
-    glActiveTexture(GL_TEXTURE0);
+void pl::Shader::use() const
+{
+    if (shaderProgram == 0)
+    {
+        return;
+    }
+
+    if (usedShader != shaderProgram)
+    {
+        use();
+        usedShader = shaderProgram;
+    }
 }
 
 GLuint pl::Shader::getProgram()
@@ -139,7 +172,7 @@ void pl::Shader::setUniform1f(const std::string& name, float v0)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform1f(location, v0);
     }
 }
@@ -149,7 +182,7 @@ void pl::Shader::setUniform2f(const std::string& name, float v0, float v1)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform2f(location, v0, v1);
     }
 }
@@ -159,7 +192,7 @@ void pl::Shader::setUniform3f(const std::string& name, float v0, float v1, float
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform3f(location, v0, v1, v2);
     }
 }
@@ -169,7 +202,7 @@ void pl::Shader::setUniform4f(const std::string& name, float v0, float v1, float
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform4f(location, v0, v1, v2, v3);
     }
 }
@@ -179,7 +212,7 @@ void pl::Shader::setUniform1i(const std::string& name, int v0)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform1i(location, v0);
     }
 }
@@ -189,7 +222,7 @@ void pl::Shader::setUniform2i(const std::string& name, int v0, int v1)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform2i(location, v0, v1);
     }
 }
@@ -199,7 +232,7 @@ void pl::Shader::setUniform3i(const std::string& name, int v0, int v1, int v2)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform3i(location, v0, v1, v2);
     }
 }
@@ -209,7 +242,7 @@ void pl::Shader::setUniform4i(const std::string& name, int v0, int v1, int v2, i
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform4i(location, v0, v1, v2, v3);
     }
 }
@@ -219,7 +252,7 @@ void pl::Shader::setUniform1ui(const std::string& name, uint32_t v0)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform1ui(location, v0);
     }
 }
@@ -229,7 +262,7 @@ void pl::Shader::setUniform2ui(const std::string& name, uint32_t v0, uint32_t v1
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform2ui(location, v0, v1);
     }
 }
@@ -239,7 +272,7 @@ void pl::Shader::setUniform3ui(const std::string& name, uint32_t v0, uint32_t v1
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform3ui(location, v0, v1, v2);
     }
 }
@@ -249,7 +282,7 @@ void pl::Shader::setUniform4ui(const std::string& name, uint32_t v0, uint32_t v1
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform4ui(location, v0, v1, v2, v3);
     }
 }
@@ -259,7 +292,7 @@ void pl::Shader::setUniform1fv(const std::string& name, const std::vector<float>
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform1fv(location, values.size(), values.data());
     }
 }
@@ -269,7 +302,7 @@ void pl::Shader::setUniform2fv(const std::string& name, const std::vector<float>
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform2fv(location, values.size(), values.data());
     }
 }
@@ -279,7 +312,7 @@ void pl::Shader::setUniform3fv(const std::string& name, const std::vector<float>
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform3fv(location, values.size(), values.data());
     }
 }
@@ -289,7 +322,7 @@ void pl::Shader::setUniform4fv(const std::string& name, const std::vector<float>
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform4fv(location, values.size(), values.data());
     }
 }
@@ -299,7 +332,7 @@ void pl::Shader::setUniform1iv(const std::string& name, const std::vector<int>& 
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform1iv(location, values.size(), values.data());
     }
 }
@@ -309,7 +342,7 @@ void pl::Shader::setUniform2iv(const std::string& name, const std::vector<int>& 
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform2iv(location, values.size(), values.data());
     }
 }
@@ -319,7 +352,7 @@ void pl::Shader::setUniform3iv(const std::string& name, const std::vector<int>& 
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform3iv(location, values.size(), values.data());
     }
 }
@@ -329,7 +362,7 @@ void pl::Shader::setUniform4iv(const std::string& name, const std::vector<int>& 
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform4iv(location, values.size(), values.data());
     }
 }
@@ -339,7 +372,7 @@ void pl::Shader::setUniform1uiv(const std::string& name, const std::vector<uint3
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform1uiv(location, values.size(), values.data());
     }
 }
@@ -349,7 +382,7 @@ void pl::Shader::setUniform2uiv(const std::string& name, const std::vector<uint3
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform2uiv(location, values.size(), values.data());
     }
 }
@@ -359,7 +392,7 @@ void pl::Shader::setUniform3uiv(const std::string& name, const std::vector<uint3
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform3uiv(location, values.size(), values.data());
     }
 }
@@ -369,7 +402,7 @@ void pl::Shader::setUniform4uiv(const std::string& name, const std::vector<uint3
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         glUniform4uiv(location, values.size(), values.data());
     }
 }
@@ -379,7 +412,7 @@ void pl::Shader::setUniformColor(const std::string& name, const Color& color)
     int location = getUniformLocation(name);
     if (location >= 0)
     {
-        glUseProgram(shaderProgram);
+        use();
         Color colorNormalised = color.normalise();
         glUniform4f(location, colorNormalised.r, colorNormalised.g, colorNormalised.b, colorNormalised.a);
     }
@@ -391,5 +424,11 @@ void pl::Shader::setUniformTexture(const std::string& name, const Texture& textu
     if (location >= 0)
     {
         textureBindings[location] = &texture;
+
+        // Texture bindings have changed - allow shader to be rebound
+        if (boundShader == shaderProgram)
+        {
+            boundShader = 0;
+        }
     }
 }

@@ -80,12 +80,18 @@ public:
     void setUniformTexture(const std::string& name, const Texture& texture);
 
 private:
+    // Does not bind textures - used for setting uniforms
+    void use() const;
+
     int getUniformLocation(const std::string& uniformName);
 
     GLuint shaderProgram = 0;
 
     std::unordered_map<std::string, int> uniformLocations;
     std::unordered_map<int, const Texture*> textureBindings;
+
+    static GLuint boundShader;
+    static GLuint usedShader;
 
 };
 

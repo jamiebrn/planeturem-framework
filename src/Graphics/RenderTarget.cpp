@@ -3,6 +3,9 @@
 #include "Graphics/Texture.hpp"
 #include "Graphics/VertexArray.hpp"
 
+int pl::RenderTarget::activeFrameBuffer = -1;
+int pl::RenderTarget::currentBlendMode = -1;
+
 void pl::RenderTarget::clear(const Color& color)
 {
     bind();
@@ -31,28 +34,33 @@ void pl::RenderTarget::draw(VertexArray& vertexArray, Shader& shader, const Text
         shader.setUniform2f("v_textureSize", 0, 0);
     }
 
-    switch (blendMode)
+    if (blendMode != currentBlendMode)
     {
-        case BlendMode::None:
+        switch (blendMode)
         {
-            glBlendFunc(GL_ONE, GL_ZERO);
-            break;
+            case BlendMode::None:
+            {
+                glBlendFunc(GL_ONE, GL_ZERO);
+                break;
+            }
+            case BlendMode::Add:
+            {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                break;
+            }
+            case BlendMode::Multiply:
+            {
+                glBlendFunc(GL_DST_COLOR, GL_ZERO);
+                break;
+            }
+            case BlendMode::Alpha:
+            {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            }
         }
-        case BlendMode::Add:
-        {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            break;
-        }
-        case BlendMode::Multiply:
-        {
-            glBlendFunc(GL_DST_COLOR, GL_ZERO);
-            break;
-        }
-        case BlendMode::Alpha:
-        {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            break;
-        }
+
+        currentBlendMode = blendMode;
     }
 
     vertexArray.draw(*this, texture);

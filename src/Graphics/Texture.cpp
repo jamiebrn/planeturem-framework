@@ -1,10 +1,20 @@
 #include "Graphics/Texture.hpp"
 
+std::unordered_map<uint8_t, GLuint> pl::Texture::activeTextures;
+
 pl::Texture::~Texture()
 {
     if (textureId == 0)
     {
         return;
+    }
+
+    for (auto& unit : activeTextures)
+    {
+        if (unit.second == textureId)
+        {
+            unit.second = 0;
+        }
     }
 
     // Free memory
@@ -113,9 +123,18 @@ int pl::Texture::getHeight() const
 
 void pl::Texture::use(int unit) const
 {
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    glActiveTexture(GL_TEXTURE0);
+    if (textureId == 0)
+    {
+        return;
+    }
+
+    if (activeTextures[unit] != textureId)
+    {
+        glActiveTexture(GL_TEXTURE0 + unit);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+
+        activeTextures[unit] = textureId;
+    }
 }
 
 GLuint pl::Texture::getID()

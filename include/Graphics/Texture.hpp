@@ -3,6 +3,7 @@
 #include <extlib/gl.h>
 #include <string>
 #include <iostream>
+#include <unordered_map>
 
 #include "Graphics/Image.hpp"
 
@@ -35,6 +36,8 @@ private:
 
     int width = 0;
     int height = 0;
+
+    static std::unordered_map<uint8_t, GLuint> activeTextures;
 
 };
 

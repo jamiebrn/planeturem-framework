@@ -21,6 +21,11 @@ pl::Window::~Window()
 {
     SDL_DestroyWindow(window);
     SDL_DelEventWatch(eventWatch, this);
+
+    if (activeFrameBuffer == 0)
+    {
+        activeFrameBuffer = -1;
+    }
 }
 
 void pl::Window::create(const std::string& title, int width, int height, uint32_t flags)
@@ -122,7 +127,8 @@ int pl::Window::pollEvent(SDL_Event& event)
     {
         if (event.window.event == SDL_WINDOWEVENT_RESIZED)
         {
-            glViewport(0, 0, event.window.data1, event.window.data2);
+            // Allow framebuffer to rebind and reconfigure viewport size
+            activeFrameBuffer = -1;
         }
     }
 
@@ -156,8 +162,12 @@ SDL_GLContext pl::Window::getGLContext()
 
 void pl::Window::bind()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, getWidth(), getHeight());
+    if (activeFrameBuffer != 0)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, getWidth(), getHeight());
+        activeFrameBuffer = 0;
+    }
 }
 
 int pl::Window::getWidth()

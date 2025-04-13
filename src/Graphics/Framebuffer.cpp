@@ -2,6 +2,11 @@
 
 pl::Framebuffer::~Framebuffer()
 {
+    if (activeFrameBuffer == framebuffer)
+    {
+        activeFrameBuffer = -1;
+    }
+
     if (framebuffer > 0)
     {
         glDeleteFramebuffers(1, &framebuffer);
@@ -16,28 +21,31 @@ bool pl::Framebuffer::create(uint32_t width, uint32_t height)
         {
             return true;
         }
-        glDeleteFramebuffers(1, &framebuffer);
     }
-
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-    GLuint textureColorBuffer;
-    glGenTextures(1, &textureColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    else
     {
-        return false;
+        glGenFramebuffers(1, &framebuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     }
 
-    texture.setFromAllocated(textureColorBuffer, width, height);
+    if (texture.getID() == 0)
+    {
+        GLuint textureColorBuffer;
+        glGenTextures(1, &textureColorBuffer);
+        glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+        
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        {
+            return false;
+        }
+
+        texture.setFromAllocated(textureColorBuffer, width, height);
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
     return true;
 }
@@ -59,8 +67,12 @@ const pl::Texture& pl::Framebuffer::getTexture()
 
 void pl::Framebuffer::bind()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    glViewport(0, 0, texture.getWidth(), texture.getHeight());
+    if (activeFrameBuffer != framebuffer)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glViewport(0, 0, texture.getWidth(), texture.getHeight());
+        activeFrameBuffer = framebuffer;
+    }
 }
 
 int pl::Framebuffer::getWidth()
