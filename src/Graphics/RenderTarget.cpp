@@ -26,6 +26,10 @@ void pl::RenderTarget::draw(VertexArray& vertexArray, Shader& shader, const Text
         texture->use();
         shader.setUniform2f("v_textureSize", texture->getWidth(), texture->getHeight());
     }
+    else
+    {
+        shader.setUniform2f("v_textureSize", 0, 0);
+    }
 
     switch (blendMode)
     {
