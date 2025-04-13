@@ -1,7 +1,7 @@
 #include "Graphics/VertexArray.hpp"
 
-GLuint pl::VertexArray::vertexArray = 0;
-std::array<GLuint, pl::VertexArray::VERTEX_BUFFER_COUNT> pl::VertexArray::vertexBuffers;
+std::array<GLuint, pl::VertexArray::VERTEX_BUFFER_COUNT> pl::VertexArray::vertexArrays = {0, 0, 0};
+std::array<GLuint, pl::VertexArray::VERTEX_BUFFER_COUNT> pl::VertexArray::vertexBuffers = {0, 0, 0};
 int pl::VertexArray::vertexBufferIndex = 0;
 
 pl::VertexArray::VertexArray()
@@ -93,31 +93,31 @@ int pl::VertexArray::size()
 
 void pl::VertexArray::initBuffers()
 {
-    glGenVertexArrays(1, &vertexArray);
-
-    glBindVertexArray(vertexArray);
-    
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f)));
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f) + sizeof(Color)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
+    glGenVertexArrays(vertexArrays.size(), vertexArrays.data());
+    glGenBuffers(vertexBuffers.size(), vertexBuffers.data());
 
     for (int i = 0; i < vertexBuffers.size(); i++)
     {
-        glGenBuffers(1, &vertexBuffers[i]);
+        glBindVertexArray(vertexArrays[i]);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[i]);
+        
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), 0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f)));
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)(sizeof(Vector2f) + sizeof(Color)));
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
     }
 }
 
 void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
 {
-    if (vertexArray == 0)
+    if (vertexArrays[0] == 0)
     {
         initBuffers();
     }
     
-    glBindVertexArray(vertexArray);
+    glBindVertexArray(vertexArrays[vertexBufferIndex]);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffers[vertexBufferIndex]);
     
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);

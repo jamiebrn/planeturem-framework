@@ -48,8 +48,8 @@ private:
     uint32_t primitiveMode;
 
     static constexpr int VERTEX_BUFFER_COUNT = 3;
-
-    static GLuint vertexArray;
+    
+    static std::array<GLuint, VERTEX_BUFFER_COUNT> vertexArrays;
     static std::array<GLuint, VERTEX_BUFFER_COUNT> vertexBuffers;
     static int vertexBufferIndex;
 
