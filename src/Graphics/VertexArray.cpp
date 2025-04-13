@@ -1,24 +1,27 @@
 #include "Graphics/VertexArray.hpp"
 
+GLuint pl::VertexArray::vertexArray = 0;
+GLuint pl::VertexArray::vertexBuffer = 0;
+
 pl::VertexArray::VertexArray()
 {
     primitiveMode = GL_TRIANGLES;
 
-    vertexArray = 0;
-    vertexBuffer = 0;
+    // vertexArray = 0;
+    // vertexBuffer = 0;
 }
 
 pl::VertexArray::~VertexArray()
 {
-    if (vertexBuffer != 0)
-    {
-        glDeleteBuffers(1, &vertexBuffer);
-    }
+    // if (vertexBuffer != 0)
+    // {
+    //     glDeleteBuffers(1, &vertexBuffer);
+    // }
 
-    if (vertexArray != 0)
-    {
-        glDeleteVertexArrays(1, &vertexArray);
-    }
+    // if (vertexArray != 0)
+    // {
+    //     glDeleteVertexArrays(1, &vertexArray);
+    // }
 }
 
 void pl::VertexArray::addVertex(const Vertex& vertex)
