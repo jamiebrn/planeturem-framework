@@ -2,7 +2,7 @@
 
 GLuint pl::VertexArray::vertexArray = 0;
 std::array<GLuint, pl::VertexArray::VERTEX_BUFFER_COUNT> pl::VertexArray::vertexBuffers;
-int pl::VertexArray::vertexBufferIndex;
+int pl::VertexArray::vertexBufferIndex = 0;
 
 pl::VertexArray::VertexArray()
 {
