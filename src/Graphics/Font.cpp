@@ -5,6 +5,7 @@ FT_Library pl::Font::freetype = nullptr;
 pl::Font::Font()
 {
     fontFace = nullptr;
+    fontStroker = nullptr;
 }
 
 pl::Font::Font(const std::string& fontPath)
