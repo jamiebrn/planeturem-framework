@@ -144,6 +144,4 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
     
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
     glDrawArrays(primitiveMode, 0, vertices.size());
-
-    glBindVertexArray(0);
 }

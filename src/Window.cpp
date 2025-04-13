@@ -150,6 +150,22 @@ void pl::Window::setTitle(const std::string& title)
     SDL_SetWindowTitle(window, title.c_str());
 }
 
+void pl::Window::showWindow()
+{
+    if (window)
+    {
+        SDL_ShowWindow(window);
+    }
+}
+
+void pl::Window::hideWindow()
+{
+    if (window)
+    {
+        SDL_HideWindow(window);
+    }
+}
+
 SDL_Window* pl::Window::getSDLWindow()
 {
     return window;

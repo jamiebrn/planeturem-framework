@@ -44,6 +44,9 @@ public:
 
     void setTitle(const std::string& title);
 
+    void showWindow();
+    void hideWindow();
+    
     SDL_Window* getSDLWindow();
     SDL_GLContext getGLContext();
 
