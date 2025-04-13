@@ -106,7 +106,7 @@ void pl::VertexArray::initBuffers()
 
     for (int i = 0; i < vertexBuffers.size(); i++)
     {
-        glGenBuffers(GL_ARRAY_BUFFER, &vertexBuffers[i]);
+        glGenBuffers(1, &vertexBuffers[i]);
     }
 }
 
