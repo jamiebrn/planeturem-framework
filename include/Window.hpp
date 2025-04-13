@@ -45,6 +45,7 @@ public:
     void setTitle(const std::string& title);
 
     SDL_Window* getSDLWindow();
+    SDL_GLContext getGLContext();
 
     virtual void bind() override;
 

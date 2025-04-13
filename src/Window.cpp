@@ -149,6 +149,11 @@ SDL_Window* pl::Window::getSDLWindow()
     return window;
 }
 
+SDL_GLContext pl::Window::getGLContext()
+{
+    return glContext;
+}
+
 void pl::Window::bind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

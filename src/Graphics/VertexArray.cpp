@@ -117,22 +117,19 @@ void pl::VertexArray::initBuffers()
 
 void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
 {
-    std::vector<Vertex> transformedVertices = vertices;
+    // std::vector<Vertex> transformedVertices = vertices;
     
-    float halfTargetWidth = renderTarget.getWidth() / 2.0f;
-    float halfTargetHeight = renderTarget.getHeight() / 2.0f;
-    
-    for (Vertex& vertex : transformedVertices)
-    {
-        vertex.position.x = (vertex.position.x - halfTargetWidth) / halfTargetWidth;
-        vertex.position.y = -(vertex.position.y - halfTargetHeight) / halfTargetHeight;
-        if (texture)
-        {
-            vertex.textureUV.x /= texture->getWidth();
-            vertex.textureUV.y /= texture->getHeight();
-        }
-        vertex.color = vertex.color.normalise();
-    }
+    // for (Vertex& vertex : transformedVertices)
+    // {
+    //     vertex.position.x = (vertex.position.x - halfTargetWidth) / halfTargetWidth;
+    //     vertex.position.y = -(vertex.position.y - halfTargetHeight) / halfTargetHeight;
+    //     if (texture)
+    //     {
+    //         vertex.textureUV.x /= texture->getWidth();
+    //         vertex.textureUV.y /= texture->getHeight();
+    //     }
+    //     vertex.color = vertex.color.normalise();
+    // }
     
     if (vertexArray == 0 || vertexBuffer == 0)
     {
@@ -142,8 +139,8 @@ void pl::VertexArray::draw(RenderTarget& renderTarget, const Texture* texture)
     glBindVertexArray(vertexArray);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     
-    glBufferData(GL_ARRAY_BUFFER, transformedVertices.size() * sizeof(Vertex), transformedVertices.data(), GL_DYNAMIC_DRAW);
-    glDrawArrays(primitiveMode, 0, transformedVertices.size());
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_DYNAMIC_DRAW);
+    glDrawArrays(primitiveMode, 0, vertices.size());
 
     glBindVertexArray(0);
 }

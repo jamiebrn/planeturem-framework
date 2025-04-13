@@ -11,14 +11,20 @@ void pl::RenderTarget::clear(const Color& color)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void pl::RenderTarget::draw(VertexArray& vertexArray, const Shader& shader, const Texture* texture, BlendMode blendMode)
+void pl::RenderTarget::draw(VertexArray& vertexArray, Shader& shader, const Texture* texture, BlendMode blendMode)
 {
     bind();
     shader.bind();
+    
+    float halfTargetWidth = getWidth() / 2.0f;
+    float halfTargetHeight = getHeight() / 2.0f;
+
+    shader.setUniform2f("v_targetHalfSize", halfTargetWidth, halfTargetHeight);
 
     if (texture)
     {
         texture->use();
+        shader.setUniform2f("v_textureSize", texture->getWidth(), texture->getHeight());
     }
 
     switch (blendMode)
