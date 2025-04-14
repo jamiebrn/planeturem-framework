@@ -19,7 +19,14 @@ pl::Window::Window(const std::string& title, int width, int height, uint32_t fla
 
 pl::Window::~Window()
 {
-    SDL_DestroyWindow(window);
+    if (glContext)
+    {
+        SDL_GL_DeleteContext(glContext);
+    }
+    if (window)
+    {
+        SDL_DestroyWindow(window);
+    }
     SDL_DelEventWatch(eventWatch, this);
 
     if (activeFrameBuffer == 0)
