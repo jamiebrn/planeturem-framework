@@ -143,7 +143,7 @@ void pl::Texture::use(int unit) const
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(GL_TEXTURE_2D, textureId);
 
-        activeTextures[unit] = textureId;
+        // activeTextures[unit] = textureId;
     }
 }
 
