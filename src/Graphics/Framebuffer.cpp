@@ -43,8 +43,7 @@ bool pl::Framebuffer::create(uint32_t width, uint32_t height)
     }
     else
     {
-        texture.use();
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        texture.overwriteData(width, height, nullptr);
     }
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.getID(), 0);
