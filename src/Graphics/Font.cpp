@@ -126,13 +126,11 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
             outlineFontVertices.addQuad(Rect<float>(xPos - (characterOutlineData.size.x - characterData.size.x) / 2,
                                                     yPos - (characterOutlineData.size.y - characterData.size.y) / 2,
                         characterOutlineData.size.x, characterOutlineData.size.y), drawData.outlineColor,
-            Rect<float>(characterOutlineData.textureUV.x / TEXTURE_WIDTH, characterOutlineData.textureUV.y / outlineCharacterSet.texture.getHeight(),
-                        characterOutlineData.textureUV.width / TEXTURE_WIDTH, characterOutlineData.textureUV.height / outlineCharacterSet.texture.getHeight()));
+            Rect<float>(characterOutlineData.textureUV.x, characterOutlineData.textureUV.y, characterOutlineData.textureUV.width, characterOutlineData.textureUV.height));
         }
 
         fontVertices.addQuad(Rect<float>(xPos, yPos, characterData.size.x, characterData.size.y), drawData.color,
-            Rect<float>(characterData.textureUV.x / TEXTURE_WIDTH, characterData.textureUV.y / characterSet.texture.getHeight(),
-                        characterData.textureUV.width / TEXTURE_WIDTH, characterData.textureUV.height / characterSet.texture.getHeight()));
+            Rect<float>(characterData.textureUV.x, characterData.textureUV.y, characterData.textureUV.width, characterData.textureUV.height));
 
         textPos.x += characterData.advance >> 16;
     }
