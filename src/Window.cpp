@@ -129,6 +129,7 @@ int pl::Window::pollEvent(SDL_Event& event)
         {
             // Allow framebuffer to rebind and reconfigure viewport size
             activeFrameBuffer = -1;
+            bind();
         }
     }
 

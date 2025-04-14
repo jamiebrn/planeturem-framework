@@ -68,9 +68,6 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
         return;
     }
 
-    renderTarget.bind();
-    shader.bind();
-
     const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
 
     // Null if not centring / clamping to area
