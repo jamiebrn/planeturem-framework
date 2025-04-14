@@ -121,6 +121,16 @@ int pl::Texture::getHeight() const
     return height;
 }
 
+void pl::Texture::overwriteData(int width, int height, const void* data)
+{
+    use();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    this->width = width;
+    this->height = height;
+}
+
 void pl::Texture::use(int unit) const
 {
     if (textureId == 0)

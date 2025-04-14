@@ -28,6 +28,8 @@ public:
     int getWidth() const;
     int getHeight() const;
 
+    void overwriteData(int width, int height, const void* data);
+
     void use(int unit = 0) const;
     GLuint getID();
 
