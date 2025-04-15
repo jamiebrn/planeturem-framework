@@ -16,6 +16,11 @@ void pl::RenderTarget::clear(const Color& color)
 
 void pl::RenderTarget::draw(VertexArray& vertexArray, Shader& shader, const Texture* texture, BlendMode blendMode)
 {
+    if (vertexArray.size() <= 0)
+    {
+        return;
+    }
+    
     bind();
     shader.bind();
     
