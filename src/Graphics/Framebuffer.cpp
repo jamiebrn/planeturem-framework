@@ -45,6 +45,7 @@ bool pl::Framebuffer::create(uint32_t width, uint32_t height)
     else
     {
         texture.overwriteData(width, height, nullptr);
+        texture.use();
     }
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.getID(), 0);
