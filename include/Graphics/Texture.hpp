@@ -28,7 +28,7 @@ public:
     int getWidth() const;
     int getHeight() const;
 
-    void overwriteData(int width, int height, const void* data);
+    void overwriteData(int width, int height, const void* data, uint32_t colorFormat = GL_RGBA, uint32_t memoryFormat = GL_UNSIGNED_BYTE);
 
     static void bindTextureID(GLuint textureId, int unit);
 

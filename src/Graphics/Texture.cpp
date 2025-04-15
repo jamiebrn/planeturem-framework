@@ -115,11 +115,11 @@ int pl::Texture::getHeight() const
     return height;
 }
 
-void pl::Texture::overwriteData(int width, int height, const void* data)
+void pl::Texture::overwriteData(int width, int height, const void* data, uint32_t colorFormat, uint32_t memoryFormat)
 {
     use();
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, colorFormat, width, height, 0, colorFormat, memoryFormat, data);
 
     this->width = width;
     this->height = height;
