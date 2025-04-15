@@ -21,7 +21,7 @@ public:
     VertexArray();
     ~VertexArray();
 
-    void addVertex(const Vertex& vertex);
+    void addVertex(Vertex vertex);
     void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV);
     void setVertexData(const std::vector<Vertex> vertices);
     void appendVertexArray(const VertexArray& vertexArray);

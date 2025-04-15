@@ -13,8 +13,10 @@ pl::VertexArray::~VertexArray()
 {
 }
 
-void pl::VertexArray::addVertex(const Vertex& vertex)
+void pl::VertexArray::addVertex(Vertex vertex)
 {
+    vertex.position.x = round(vertex.position.x);
+    vertex.position.y = round(vertex.position.y);
     vertices.push_back(vertex);
 }
 
