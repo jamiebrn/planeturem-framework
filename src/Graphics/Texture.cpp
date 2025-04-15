@@ -45,7 +45,7 @@ bool pl::Texture::loadTexture(uint8_t* pixels, int width, int height, bool mipma
         glGenTextures(1, &textureId);
     }
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    bindTextureID(textureId, 0);
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -62,8 +62,6 @@ bool pl::Texture::loadTexture(uint8_t* pixels, int width, int height, bool mipma
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 
     return true;
 }
@@ -88,12 +86,10 @@ void pl::Texture::setTextureRepeat(bool repeat)
         return;
     }
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    bindTextureID(textureId, 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void pl::Texture::setLinearFilter(bool value)
@@ -103,12 +99,10 @@ void pl::Texture::setLinearFilter(bool value)
         return;
     }
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    bindTextureID(textureId, 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, value ? GL_LINEAR : GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, value ? GL_LINEAR : GL_NEAREST);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 int pl::Texture::getWidth() const
@@ -131,13 +125,8 @@ void pl::Texture::overwriteData(int width, int height, const void* data)
     this->height = height;
 }
 
-void pl::Texture::use(int unit) const
+void pl::Texture::bindTextureID(GLuint textureId, int unit)
 {
-    if (textureId == 0)
-    {
-        return;
-    }
-
     if (activeTextures[unit] != textureId)
     {
         glActiveTexture(GL_TEXTURE0 + unit);
@@ -145,6 +134,16 @@ void pl::Texture::use(int unit) const
 
         activeTextures[unit] = textureId;
     }
+}
+
+void pl::Texture::use(int unit) const
+{
+    if (textureId == 0)
+    {
+        return;
+    }
+
+    bindTextureID(textureId, unit);
 }
 
 GLuint pl::Texture::getID()

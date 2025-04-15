@@ -324,7 +324,7 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
     {
         GLuint newCharacterSetTexture;
         glGenTextures(1, &newCharacterSetTexture);
-        glBindTexture(GL_TEXTURE_2D, newCharacterSetTexture);
+        Texture::bindTextureID(newCharacterSetTexture, 0);
     
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     

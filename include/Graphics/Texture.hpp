@@ -30,6 +30,8 @@ public:
 
     void overwriteData(int width, int height, const void* data);
 
+    static void bindTextureID(GLuint textureId, int unit);
+
     void use(int unit = 0) const;
     GLuint getID();
 

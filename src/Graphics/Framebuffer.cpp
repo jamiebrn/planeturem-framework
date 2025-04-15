@@ -33,7 +33,8 @@ bool pl::Framebuffer::create(uint32_t width, uint32_t height)
     {
         GLuint textureColorBuffer;
         glGenTextures(1, &textureColorBuffer);
-        glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+        Texture::bindTextureID(textureColorBuffer, 0);
+        
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
