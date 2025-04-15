@@ -40,6 +40,7 @@ bool pl::Framebuffer::create(uint32_t width, uint32_t height)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
         
         texture.setFromAllocated(textureColorBuffer, width, height);
+        texture.setLinearFilter(false);
     }
     else
     {
