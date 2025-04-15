@@ -63,6 +63,11 @@ bool pl::Font::loadFromFile(const std::string& fontPath)
 
 void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData)
 {
+    if (!fontFace || !fontStroker)
+    {
+        return;
+    }
+
     if (!createRequiredGlyphs(drawData))
     {
         return;
@@ -71,7 +76,7 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
     const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
 
     // Null if not centring / clamping to area
-    Rect<float> textBounds(0, 0, 0, 0);
+    Rect<int> textBounds(0, 0, 0, 0);
     if (drawData.centeredX || drawData.centeredY || drawData.containOnScreenX || drawData.containOnScreenY)
     {
         textBounds = measureText(drawData);
@@ -145,9 +150,9 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
     renderTarget.draw(fontVertices, shader, &characterSet.texture, pl::BlendMode::Alpha);
 }
 
-pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
+pl::Rect<int> pl::Font::measureText(const TextDrawData& drawData)
 {
-    if (drawData.text.empty())
+    if (!fontFace || !fontStroker || drawData.text.empty())
     {
         return Rect<float>(drawData.position.x, drawData.position.y, 0, 0);
     }
@@ -159,7 +164,11 @@ pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
 
     const CharacterSet& characterSet = renderedCharacterSets.at(drawData.size);
 
-    Vector2f textPos = drawData.position;
+    // Vector2f textPos = drawData.position;
+
+    int lines = 1;
+    int maxLineWidth = 0;
+    int lineWidth = 0;
 
     for (char character : drawData.text)
     {
@@ -167,22 +176,27 @@ pl::Rect<float> pl::Font::measureText(const TextDrawData& drawData)
 
         if (character == '\n')
         {
-            textPos.y += drawData.size;
-            textPos.x = drawData.position.x;
+            lines++;
+            maxLineWidth = std::max(maxLineWidth, lineWidth);
+            lineWidth = 0;
+            // textPos.y += drawData.size;
+            // textPos.x = drawData.position.x;
             continue;
         }
-
-        float xPos = textPos.x + characterData.bearing.x;
-        float yPos = textPos.y + drawData.size - characterData.bearing.y;
-
-        textPos.x += characterData.advance >> 16;
+        
+        // float xPos = textPos.x + characterData.bearing.x;
+        // float yPos = textPos.y + drawData.size - characterData.bearing.y;
+        
+        lineWidth += characterData.advance >> 16;
     }
+
+    maxLineWidth = std::max(maxLineWidth, lineWidth);
 
     Rect<float> bounds;
     bounds.x = drawData.position.x;
     bounds.y = drawData.position.y;
-    bounds.width = textPos.x - drawData.position.x;
-    bounds.height = textPos.y + drawData.size - drawData.position.y;
+    bounds.width = maxLineWidth;
+    bounds.height = lines * ((fontFace->size->metrics.ascender - fontFace->size->metrics.descender) >> 6);
 
     if (drawData.outlineThickness > 0)
     {

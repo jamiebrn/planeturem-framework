@@ -37,7 +37,7 @@ public:
 
     void draw(RenderTarget& renderTarget, Shader& shader, const TextDrawData& drawData);
 
-    pl::Rect<float> measureText(const TextDrawData& drawData);
+    pl::Rect<int> measureText(const TextDrawData& drawData);
 
 private:
     bool createRequiredGlyphs(const TextDrawData& drawData);

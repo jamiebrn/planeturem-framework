@@ -16,17 +16,17 @@ struct TextDrawData
     unsigned int size;
 
     Color outlineColor = Color(0, 0, 0);
-    float outlineThickness = 0;
+    unsigned int outlineThickness = 0;
 
     bool centeredX = false;
     bool centeredY = false;
 
     bool containOnScreenX = false;
     bool containOnScreenY = false;
-    float containPaddingLeft = 0;
-    float containPaddingRight = 0;
-    float containPaddingTop = 0;
-    float containPaddingBottom = 0;
+    int containPaddingLeft = 0;
+    int containPaddingRight = 0;
+    int containPaddingTop = 0;
+    int containPaddingBottom = 0;
 };
 
 }
