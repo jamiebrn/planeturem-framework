@@ -105,6 +105,9 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
         textStartPos.y = textBounds.y;
     }
 
+    // Apply pen offset
+    textStartPos.y += characterSet.lineSpacing;
+
     Vector2f textPos = textStartPos;
 
     VertexArray outlineFontVertices;
@@ -115,13 +118,13 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
         if (character == '\n')
         {
-            textPos.y += drawData.size;
-            textPos.x = drawData.position.x;
+            textPos.y += characterSet.lineSpacing;
+            textPos.x = textStartPos.x;
             continue;
         }
 
         float xPos = textPos.x + characterData.bearing.x;
-        float yPos = textPos.y + drawData.size - characterData.bearing.y;
+        float yPos = textPos.y - characterData.bearing.y;
 
         if (drawData.outlineThickness > 0)
         {
@@ -130,12 +133,10 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
 
             outlineFontVertices.addQuad(Rect<float>(xPos - (characterOutlineData.size.x - characterData.size.x) / 2,
                                                     yPos - (characterOutlineData.size.y - characterData.size.y) / 2,
-                        characterOutlineData.size.x, characterOutlineData.size.y), drawData.outlineColor,
-            Rect<float>(characterOutlineData.textureUV.x, characterOutlineData.textureUV.y, characterOutlineData.textureUV.width, characterOutlineData.textureUV.height));
+                        characterOutlineData.size.x, characterOutlineData.size.y), drawData.outlineColor, characterOutlineData.textureUV);
         }
 
-        fontVertices.addQuad(Rect<float>(xPos, yPos, characterData.size.x, characterData.size.y), drawData.color,
-            Rect<float>(characterData.textureUV.x, characterData.textureUV.y, characterData.textureUV.width, characterData.textureUV.height));
+        fontVertices.addQuad(Rect<float>(xPos, yPos, characterData.size.x, characterData.size.y), drawData.color, characterData.textureUV);
 
         textPos.x += characterData.advance >> 16;
     }
@@ -166,52 +167,62 @@ pl::Rect<int> pl::Font::measureText(const TextDrawData& drawData)
 
     // Vector2f textPos = drawData.position;
 
-    int lines = 1;
-    int maxLineWidth = 0;
-    int lineWidth = 0;
+    // int lines = 1;
+    // int maxLineWidth = 0;
+    // int lineWidth = 0;
+
+    float x = 0;
+    float y = characterSet.lineSpacing;
+    
+    float minX = drawData.size;
+    float minY = y;
+    float maxX = 0;
+    float maxY = 0;
 
     for (char character : drawData.text)
     {
-        const Character& characterData = characterSet.characterData.at(character);
-
         if (character == '\n')
         {
-            lines++;
-            maxLineWidth = std::max(maxLineWidth, lineWidth);
-            lineWidth = 0;
-            // textPos.y += drawData.size;
-            // textPos.x = drawData.position.x;
+            x = 0;
+            y += characterSet.lineSpacing;
             continue;
         }
         
-        // float xPos = textPos.x + characterData.bearing.x;
-        // float yPos = textPos.y + drawData.size - characterData.bearing.y;
+        const Character& characterData = characterSet.characterData.at(character);
         
-        lineWidth += characterData.advance >> 16;
-    }
+        float left = x + characterData.bearing.x;
+        float top = y - characterData.bearing.y;
+        float right = left + characterData.size.x;
+        float bottom = top + characterData.size.y;
+        
+        minX = std::min(minX, left);
+        minY = std::min(minY, top);
+        maxX = std::max(maxX, right);
+        maxY = std::max(maxY, bottom);
 
-    maxLineWidth = std::max(maxLineWidth, lineWidth);
+        x += characterData.advance >> 16;
+    }
 
     Rect<float> bounds;
     bounds.x = drawData.position.x;
     bounds.y = drawData.position.y;
-    bounds.width = maxLineWidth;
-    bounds.height = lines * ((fontFace->size->metrics.ascender - fontFace->size->metrics.descender) >> 6);
+    bounds.width = maxX - minX;
+    bounds.height = maxY - minY;
 
-    if (drawData.outlineThickness > 0)
-    {
-        const Character& characterData = characterSet.characterData.at(drawData.text[0]);
+    // if (drawData.outlineThickness > 0)
+    // {
+    //     const Character& characterData = characterSet.characterData.at(drawData.text[0]);
 
-        const CharacterSet& outlineCharacterSet = renderedOutlineCharacterSets.at(drawData.size).at(drawData.outlineThickness);
-        const Character& characterOutlineData = outlineCharacterSet.characterData.at(drawData.text[0]);
+    //     const CharacterSet& outlineCharacterSet = renderedOutlineCharacterSets.at(drawData.size).at(drawData.outlineThickness);
+    //     const Character& characterOutlineData = outlineCharacterSet.characterData.at(drawData.text[0]);
 
-        int xDiff = characterOutlineData.size.x - characterData.size.x;
-        int yDiff = characterOutlineData.size.y - characterData.size.y;
-        bounds.x -= xDiff / 2;
-        bounds.y -= yDiff / 2;
-        bounds.width += xDiff;
-        bounds.height += yDiff;
-    }
+    //     int xDiff = characterOutlineData.size.x - characterData.size.x;
+    //     int yDiff = characterOutlineData.size.y - characterData.size.y;
+    //     bounds.x -= xDiff / 2;
+    //     bounds.y -= yDiff / 2;
+    //     bounds.width += xDiff;
+    //     bounds.height += yDiff;
+    // }
 
     return bounds;
 }
@@ -265,13 +276,15 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
         loadFlags |= FT_LOAD_NO_BITMAP;
     }
 
+    characterSet->lineSpacing = fontFace->size->metrics.height >> 6;
+
     int characterSetHeight = characterSet->texture.getHeight();
 
     bool rendered = false;
     
     for (uint8_t glyphChar : glyphChars)
     {
-        if (characterSet->renderedGlyphs.contains(glyphChar))
+        if (characterSet->characterData.contains(glyphChar))
         {
             continue;
         }
@@ -305,6 +318,11 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
         character.textureUV.width = bitmapGlyph->bitmap.width;
         character.textureUV.height = bitmapGlyph->bitmap.rows;
 
+        // character.glyphBounds.x = bitmapGlyph->left;
+        // character.glyphBounds.y = -bitmapGlyph->top;
+        // character.glyphBounds.width = bitmapGlyph->bitmap.width;
+        // character.glyphBounds.height = bitmapGlyph->bitmap.rows;
+
         for (int charY = 0; charY < character.size.y; charY++)
         {
             uint32_t rowIdx = (characterSet->textureRenderIdxY * charSize + charY) * TEXTURE_WIDTH + characterSet->textureRenderIdxX * charSize;
@@ -324,7 +342,6 @@ bool pl::Font::createCharacterSetGlyphs(const std::unordered_set<uint8_t>& glyph
         characterSet->characterData[glyphChar] = character;
 
         rendered = true;
-        characterSet->renderedGlyphs.insert(glyphChar);
 
         characterSet->textureRenderIdxX++;
         if (characterSet->textureRenderIdxX * charSize > TEXTURE_WIDTH - charSize)

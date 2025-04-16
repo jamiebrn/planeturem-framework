@@ -65,9 +65,10 @@ private:
         std::unordered_map<uint8_t, Character> characterData;
 
         std::vector<uint8_t> renderedGlyphsBitmap;
-        std::unordered_set<uint8_t> renderedGlyphs;
         uint32_t textureRenderIdxX = 0;
         uint32_t textureRenderIdxY = 0;
+
+        float lineSpacing = 0;
 
         Texture texture;
         
