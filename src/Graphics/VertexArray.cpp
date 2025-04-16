@@ -35,7 +35,7 @@ void pl::VertexArray::addQuad(const Rect<float>& quad, const Color& color, const
 
 void pl::VertexArray::addQuadLine(Vector2f pointOne, Vector2f pointTwo, const Color& color, int width, bool pixelClamp)
 {
-    float angle = std::atan2(pointTwo.y - pointOne.y, pointTwo.x - pointOne.x);
+    float angle = std::atan2(pointOne.y - pointTwo.y, pointOne.x - pointTwo.x);
 
     Vector2f pointOneRight = (pointOne + Vector2f(width, 0)).rotate(angle);
     Vector2f pointOneLeft = (pointOne - Vector2f(width, 0)).rotate(angle);
