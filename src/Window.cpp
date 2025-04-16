@@ -8,6 +8,7 @@ pl::Window::Window()
     window = nullptr;
     glContext = nullptr;
     updateFunction = nullptr;
+    vSyncEnabled = false;
 }
 
 pl::Window::Window(const std::string& title, int width, int height, uint32_t flags)
@@ -86,7 +87,11 @@ void pl::Window::toggleFullscreen()
 
 void pl::Window::setVSync(bool enabled)
 {
-    SDL_GL_SetSwapInterval(enabled);
+    if (enabled != vSyncEnabled)
+    {
+        SDL_GL_SetSwapInterval(enabled);
+        vSyncEnabled = enabled;
+    }
 }
 
 void pl::Window::setIcon(const Image& image)

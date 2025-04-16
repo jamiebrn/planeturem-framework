@@ -72,6 +72,8 @@ private:
 
     bool initialised;
 
+    bool vSyncEnabled;
+
     static bool glInitialised;
 
 };
