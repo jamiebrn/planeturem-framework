@@ -21,8 +21,8 @@ public:
     VertexArray();
     ~VertexArray();
 
-    void addVertex(Vertex vertex);
-    void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV);
+    void addVertex(Vertex vertex, bool pixelClamp = true);
+    void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV, bool pixelClamp = true);
     void setVertexData(const std::vector<Vertex> vertices);
     void appendVertexArray(const VertexArray& vertexArray);
     void clear();
@@ -39,7 +39,7 @@ public:
     int size();
 
     // Always call RenderTarget::draw() for correct bindings
-    void draw(RenderTarget& renderTarget);
+    void draw();
 
 private:
     void initBuffers();

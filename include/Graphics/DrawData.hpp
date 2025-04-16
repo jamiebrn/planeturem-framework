@@ -23,6 +23,8 @@ struct DrawData
 
     // Use centre "ratio" in pixel coordinates
     bool useCentreAbsolute = false;
+
+    bool vertexPixelClamp = true;
 };
 
 }

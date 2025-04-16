@@ -89,12 +89,12 @@ void pl::SpriteBatch::draw(RenderTarget& window, const DrawData& drawData)
         vertices[i].color = drawData.color;
     }
     
-    vertexArray.addVertex(vertices[0]);
-    vertexArray.addVertex(vertices[1]);
-    vertexArray.addVertex(vertices[2]);
-    vertexArray.addVertex(vertices[0]);
-    vertexArray.addVertex(vertices[2]);
-    vertexArray.addVertex(vertices[3]);
+    vertexArray.addVertex(vertices[0], drawData.vertexPixelClamp);
+    vertexArray.addVertex(vertices[1], drawData.vertexPixelClamp);
+    vertexArray.addVertex(vertices[2], drawData.vertexPixelClamp);
+    vertexArray.addVertex(vertices[0], drawData.vertexPixelClamp);
+    vertexArray.addVertex(vertices[2], drawData.vertexPixelClamp);
+    vertexArray.addVertex(vertices[3], drawData.vertexPixelClamp);
 }
 
 void pl::SpriteBatch::endDrawing(RenderTarget& window)

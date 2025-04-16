@@ -68,5 +68,5 @@ void pl::RenderTarget::draw(VertexArray& vertexArray, Shader& shader, const Text
         currentBlendMode = blendMode;
     }
 
-    vertexArray.draw(*this);
+    vertexArray.draw();
 }

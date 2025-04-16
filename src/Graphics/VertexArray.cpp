@@ -13,21 +13,24 @@ pl::VertexArray::~VertexArray()
 {
 }
 
-void pl::VertexArray::addVertex(Vertex vertex)
+void pl::VertexArray::addVertex(Vertex vertex, bool pixelClamp)
 {
-    vertex.position.x = round(vertex.position.x);
-    vertex.position.y = round(vertex.position.y);
+    if (pixelClamp)
+    {
+        vertex.position.x = std::round(vertex.position.x);
+        vertex.position.y = std::round(vertex.position.y);
+    }
     vertices.push_back(vertex);
 }
 
-void pl::VertexArray::addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV)
+void pl::VertexArray::addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV, bool pixelClamp)
 {
-    addVertex(Vertex(quad.getPosition(), color, textureUV.getPosition()));
-    addVertex(Vertex(quad.getPosition() + Vector2f(quad.width, 0), color, textureUV.getPosition() + Vector2f(textureUV.width, 0)));
-    addVertex(Vertex(quad.getPosition() + Vector2f(0, quad.height), color, textureUV.getPosition() + Vector2f(0, textureUV.height)));
-    addVertex(Vertex(quad.getPosition() + Vector2f(quad.width, 0), color, textureUV.getPosition() + Vector2f(textureUV.width, 0)));
-    addVertex(Vertex(quad.getPosition() + quad.getSize(), color, textureUV.getPosition() + textureUV.getSize()));
-    addVertex(Vertex(quad.getPosition() + Vector2f(0, quad.height), color, textureUV.getPosition() + Vector2f(0, textureUV.height)));
+    addVertex(Vertex(quad.getPosition(), color, textureUV.getPosition()), pixelClamp);
+    addVertex(Vertex(quad.getPosition() + Vector2f(quad.width, 0), color, textureUV.getPosition() + Vector2f(textureUV.width, 0)), pixelClamp);
+    addVertex(Vertex(quad.getPosition() + Vector2f(0, quad.height), color, textureUV.getPosition() + Vector2f(0, textureUV.height)), pixelClamp);
+    addVertex(Vertex(quad.getPosition() + Vector2f(quad.width, 0), color, textureUV.getPosition() + Vector2f(textureUV.width, 0)), pixelClamp);
+    addVertex(Vertex(quad.getPosition() + quad.getSize(), color, textureUV.getPosition() + textureUV.getSize()), pixelClamp);
+    addVertex(Vertex(quad.getPosition() + Vector2f(0, quad.height), color, textureUV.getPosition() + Vector2f(0, textureUV.height)), pixelClamp);
 }
 
 void pl::VertexArray::setVertexData(const std::vector<Vertex> vertices)
@@ -112,7 +115,7 @@ void pl::VertexArray::initBuffers()
     }
 }
 
-void pl::VertexArray::draw(RenderTarget& renderTarget)
+void pl::VertexArray::draw()
 {
     if (vertexArrays[0] == 0)
     {

@@ -92,6 +92,7 @@ void pl::Font::draw(RenderTarget& renderTarget, Shader& shader, const TextDrawDa
     {
         textBounds.y -= textBounds.height / 2;
         textStartPos.y = textBounds.y;
+        textStartPos.y -= characterSet.lineSpacing / 2.55;
     }
 
     if (drawData.containOnScreenX)
