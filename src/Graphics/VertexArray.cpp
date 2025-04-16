@@ -37,10 +37,10 @@ void pl::VertexArray::addQuadLine(Vector2f pointOne, Vector2f pointTwo, const Co
 {
     float angle = std::atan2(pointOne.y - pointTwo.y, pointOne.x - pointTwo.x);
 
-    Vector2f pointOneRight = (pointOne + Vector2f(width, 0)).rotate(angle);
-    Vector2f pointOneLeft = (pointOne - Vector2f(width, 0)).rotate(angle);
-    Vector2f pointTwoRight = (pointTwo + Vector2f(width, 0)).rotate(angle);
-    Vector2f pointTwoLeft = (pointTwo - Vector2f(width, 0)).rotate(angle);
+    Vector2f pointOneRight = pointOne + Vector2f(width, 0).rotate(angle);
+    Vector2f pointOneLeft = pointOne - Vector2f(width, 0).rotate(angle);
+    Vector2f pointTwoRight = pointTwo + Vector2f(width, 0).rotate(angle);
+    Vector2f pointTwoLeft = pointTwo - Vector2f(width, 0).rotate(angle);
 
     addVertex(Vertex(pointOneLeft, color), pixelClamp);
     addVertex(Vertex(pointOneRight, color), pixelClamp);
