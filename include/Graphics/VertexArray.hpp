@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <vector>
 #include <array>
+#include <cmath>
 
 #include "Graphics/Vertex.hpp"
 #include "Graphics/PrimitiveMode.hpp"
@@ -23,6 +24,8 @@ public:
 
     void addVertex(Vertex vertex, bool pixelClamp = true);
     void addQuad(const Rect<float>& quad, const Color& color, const Rect<float>& textureUV, bool pixelClamp = true);
+    void addQuadLine(Vector2f pointOne, Vector2f pointTwo, const Color& color, int width, bool pixelClamp = true);
+
     void setVertexData(const std::vector<Vertex> vertices);
     void appendVertexArray(const VertexArray& vertexArray);
     void clear();
