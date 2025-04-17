@@ -2,10 +2,11 @@
 
 #include <extlib/gl.h>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <assert.h>
 #include <vector>
 #include <array>
-#include <cmath>
 
 #include "Graphics/Vertex.hpp"
 #include "Graphics/PrimitiveMode.hpp"
