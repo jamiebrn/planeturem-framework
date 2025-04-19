@@ -303,7 +303,7 @@ void pl::Shader::setUniform2fv(const std::string& name, const std::vector<float>
     if (location >= 0)
     {
         use();
-        glUniform2fv(location, values.size(), values.data());
+        glUniform2fv(location, values.size() / 2, values.data());
     }
 }
 
@@ -313,7 +313,7 @@ void pl::Shader::setUniform3fv(const std::string& name, const std::vector<float>
     if (location >= 0)
     {
         use();
-        glUniform3fv(location, values.size(), values.data());
+        glUniform3fv(location, values.size() / 3, values.data());
     }
 }
 
@@ -323,7 +323,7 @@ void pl::Shader::setUniform4fv(const std::string& name, const std::vector<float>
     if (location >= 0)
     {
         use();
-        glUniform4fv(location, values.size(), values.data());
+        glUniform4fv(location, values.size() / 4, values.data());
     }
 }
 
@@ -343,7 +343,7 @@ void pl::Shader::setUniform2iv(const std::string& name, const std::vector<int>& 
     if (location >= 0)
     {
         use();
-        glUniform2iv(location, values.size(), values.data());
+        glUniform2iv(location, values.size() / 2, values.data());
     }
 }
 
@@ -353,7 +353,7 @@ void pl::Shader::setUniform3iv(const std::string& name, const std::vector<int>& 
     if (location >= 0)
     {
         use();
-        glUniform3iv(location, values.size(), values.data());
+        glUniform3iv(location, values.size() / 3, values.data());
     }
 }
 
@@ -363,7 +363,7 @@ void pl::Shader::setUniform4iv(const std::string& name, const std::vector<int>& 
     if (location >= 0)
     {
         use();
-        glUniform4iv(location, values.size(), values.data());
+        glUniform4iv(location, values.size() / 4, values.data());
     }
 }
 
@@ -383,7 +383,7 @@ void pl::Shader::setUniform2uiv(const std::string& name, const std::vector<uint3
     if (location >= 0)
     {
         use();
-        glUniform2uiv(location, values.size(), values.data());
+        glUniform2uiv(location, values.size() / 2, values.data());
     }
 }
 
@@ -393,7 +393,7 @@ void pl::Shader::setUniform3uiv(const std::string& name, const std::vector<uint3
     if (location >= 0)
     {
         use();
-        glUniform3uiv(location, values.size(), values.data());
+        glUniform3uiv(location, values.size() / 3, values.data());
     }
 }
 
@@ -403,7 +403,7 @@ void pl::Shader::setUniform4uiv(const std::string& name, const std::vector<uint3
     if (location >= 0)
     {
         use();
-        glUniform4uiv(location, values.size(), values.data());
+        glUniform4uiv(location, values.size() / 4, values.data());
     }
 }
 
