@@ -61,6 +61,8 @@ void pl::Window::create(const std::string& title, int width, int height, uint32_
         glEnable(GL_BLEND);
     }
 
+    SDL_GL_SetSwapInterval(vSyncEnabled);
+
     nonFullscreenWidth = width;
     nonFullscreenHeight = height;
 
@@ -155,6 +157,7 @@ int pl::Window::pollEvent(SDL_Event& event)
 
 void pl::Window::swapBuffers()
 {
+    bind();
     SDL_GL_SwapWindow(window);
 }
 
@@ -201,15 +204,15 @@ void pl::Window::bind()
 
 int pl::Window::getWidth()
 {
-    int windowWidth, windowHeight;
-    SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+    int windowWidth;
+    SDL_GetWindowSize(window, &windowWidth, nullptr);
     return windowWidth;
 }
 
 int pl::Window::getHeight()
 {
-    int windowWidth, windowHeight;
-    SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+    int windowHeight;
+    SDL_GetWindowSize(window, nullptr, &windowHeight);
     return windowHeight;
 }
 
