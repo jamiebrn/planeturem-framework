@@ -202,14 +202,14 @@ void pl::Window::bind()
     }
 }
 
-int pl::Window::getWidth()
+int pl::Window::getWidth() const
 {
     int windowWidth;
     SDL_GetWindowSize(window, &windowWidth, nullptr);
     return windowWidth;
 }
 
-int pl::Window::getHeight()
+int pl::Window::getHeight() const
 {
     int windowHeight;
     SDL_GetWindowSize(window, nullptr, &windowHeight);

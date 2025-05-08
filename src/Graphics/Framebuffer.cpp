@@ -84,12 +84,12 @@ void pl::Framebuffer::bind()
     }
 }
 
-int pl::Framebuffer::getWidth()
+int pl::Framebuffer::getWidth() const
 {
     return texture.getWidth();
 }
 
-int pl::Framebuffer::getHeight()
+int pl::Framebuffer::getHeight() const
 {
     return texture.getHeight();
 }

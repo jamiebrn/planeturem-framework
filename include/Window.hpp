@@ -52,8 +52,8 @@ public:
 
     virtual void bind() override;
 
-    virtual int getWidth() override;
-    virtual int getHeight() override;
+    virtual int getWidth() const override;
+    virtual int getHeight() const override;
 
 private:
     static int eventWatch(void* data, SDL_Event* event);
